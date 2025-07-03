@@ -9,26 +9,62 @@ namespace SimulatorRecorder.Modules
 {
     internal static class FileManager
     {
+        private static string settingFilePath;
+        private static string folderPath;
+        private static string filePath;
+        private static int count;
+
+        static FileManager()
+        {
+            settingFilePath = Directory.GetCurrentDirectory() + "\\setting.env";
+            count = 1;
+            folderPath = LoadFolderPath();
+            filePath = Path.Combine(folderPath, $"recordLog_{count++}.csv");
+        }
+        public static void SaveFolderPath()
+        {
+            File.WriteAllText(settingFilePath, folderPath);
+        }
+
+        private static string LoadFolderPath()
+        {
+            if (File.Exists(settingFilePath))
+            {
+                return File.ReadAllText(settingFilePath).Trim();
+            }
+            else
+            {
+                return Directory.GetCurrentDirectory();
+            }
+        }
+
+        public static bool SetFilePath()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = folderPath;
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+            {
+                return false;
+            }
+            folderPath = folderBrowserDialog.SelectedPath;
+            filePath = Path.Combine(folderPath, $"recordLog_{count}.csv");
+
+            return true;
+        }
+        public static string GetFolderPath()
+        {
+            return folderPath;
+        }
+
         public static void WriteFile(List<GamepadInput> input)
         {
             if (input.Count == 0)
             {
                 return;
             }
-            string folderPath = ".\\";
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = folderPath;
-            saveFileDialog.Filter = "CSV 파일 (*.csv)|*.csv";
-            saveFileDialog.FileName = "gamepad_log.csv";
-            if (saveFileDialog.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-
             try
             {
-                string filePath = saveFileDialog.FileName;
-
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
                     String t = "Time";
@@ -54,6 +90,7 @@ namespace SimulatorRecorder.Modules
                 }
                 Console.WriteLine("location: " + filePath);
                 Console.WriteLine("done");
+                filePath = Path.Combine(folderPath, $"recordLog_{count++}.csv");
             }
             catch (Exception ex)
             {

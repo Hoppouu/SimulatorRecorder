@@ -37,6 +37,11 @@
             button_end = new Button();
             label_elapsed = new Label();
             timer_main = new System.Windows.Forms.Timer(components);
+            menuStrip1 = new MenuStrip();
+            menu1 = new ToolStripMenuItem();
+            menu1_1 = new ToolStripMenuItem();
+            menu1_2 = new ToolStripMenuItem();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // label_LstickX
@@ -118,6 +123,36 @@
             // 
             timer_main.Tick += TimerEvent;
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { menu1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(515, 24);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // menu1
+            // 
+            menu1.DropDownItems.AddRange(new ToolStripItem[] { menu1_1, menu1_2 });
+            menu1.Name = "menu1";
+            menu1.Size = new Size(71, 20);
+            menu1.Text = "저장 폴더";
+            // 
+            // menu1_1
+            // 
+            menu1_1.Name = "menu1_1";
+            menu1_1.Size = new Size(180, 22);
+            menu1_1.Text = "저장 폴더 설정";
+            menu1_1.Click += menu1_1_Click;
+            // 
+            // menu1_2
+            // 
+            menu1_2.Name = "menu1_2";
+            menu1_2.Size = new Size(180, 22);
+            menu1_2.Text = "저장 폴더 확인";
+            menu1_2.Click += menu1_2_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -131,9 +166,13 @@
             Controls.Add(label_RstickX);
             Controls.Add(label_LstickY);
             Controls.Add(label_LstickX);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
             Name = "MainForm";
             Text = "MainForm";
             Load += MainForm_Load;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -148,5 +187,9 @@
         private Button button_end;
         private Label label_elapsed;
         private System.Windows.Forms.Timer timer_main;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem menu1;
+        private ToolStripMenuItem menu1_1;
+        private ToolStripMenuItem menu1_2;
     }
 }

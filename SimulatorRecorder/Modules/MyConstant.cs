@@ -22,10 +22,23 @@ namespace Silk.NET.XInput
     {
         readonly static public XInputButtons[] buttonsKey;
         readonly static public string[] buttonsName;
+        readonly static public string[] formNames;
         static MyConstant()
         {
             buttonsKey = (XInputButtons[])Enum.GetValues(typeof(XInputButtons));
             buttonsName = Enum.GetNames(typeof(XInputButtons));
+            formNames = new string[]
+            {
+                "TIME",
+                "ROLL",
+                "PITCH",
+                "YAW",
+                "SWAY",
+                "SURGE",
+                "HEAVE",
+                "SPEED",
+                "BLOWER1"
+            };
         }
     }
 }
