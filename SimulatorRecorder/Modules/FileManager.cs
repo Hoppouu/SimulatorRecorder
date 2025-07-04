@@ -1,4 +1,4 @@
-﻿using Silk.NET.XInput;
+﻿using SimulatorRecorder.Modules;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
@@ -13,6 +13,8 @@ namespace SimulatorRecorder.Modules
         private static string folderPath;
         private static string filePath;
         private static int count;
+        
+        public static bool errorOccurred = false;
 
         static FileManager()
         {
@@ -57,33 +59,31 @@ namespace SimulatorRecorder.Modules
             return folderPath;
         }
 
-        public static void WriteFile(List<GamepadInput> input)
+        public static bool WriteFile(List<OutputValue> outputs)
         {
-            if (input.Count == 0)
-            {
-                return;
-            }
             try
             {
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    String t = "Time";
-                    for (int i = 0; i < input[0].values.Count; i++)
+                    String t = "";
+                    for (int i = 0; i < MyConstant.outputsName.Length; i++)
                     {
-                        t += ",";
-                        t += input[0].values[i].buttonName;
+                        t += MyConstant.outputsName[i];
+                        if (i < MyConstant.outputsName.Length - 1)
+                        {
+                            t += ",";
+                        }
                     }
                     writer.WriteLine(t);
 
-
-                    for (int i = 0; i < input.Count; i++)
+                    for (int i = 0; i < outputs.Count; i++)
                     {
+                        Dictionary<string, int> outputData = outputs[i].GetOutputDictionary();
                         List<string> row = new List<string>();
-                        row.Add(input[i].time.ToString("F1"));
-                        for (int j = 0; j < input[i].values.Count; j++)
+                        for (int j = 0; j < outputData.Count; j++)
                         {
-                            float value = input[i].values[j].buttonValue;
-                            row.Add(value.ToString("F2"));
+                            int value = outputData[MyConstant.outputsName[j]];
+                            row.Add(value.ToString());
                         }
                         writer.WriteLine($"{string.Join(",", row)}");
                     }
@@ -91,11 +91,21 @@ namespace SimulatorRecorder.Modules
                 Console.WriteLine("location: " + filePath);
                 Console.WriteLine("done");
                 filePath = Path.Combine(folderPath, $"recordLog_{count++}.csv");
+                errorOccurred = false;
+                return true;
             }
             catch (Exception ex)
             {
+                errorOccurred = true;
                 Console.WriteLine("error: " + ex.Message);
                 Console.WriteLine("error type: " + ex.GetType().Name);
+                MessageBoxHelper.ShowTopMost(
+                    $"파일 저장에 실패했습니다. 확인 후 종료 버튼을 눌러주세요.\n{ex.Message}",
+                    ex.GetType().Name,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return false;
             }
         }
     }

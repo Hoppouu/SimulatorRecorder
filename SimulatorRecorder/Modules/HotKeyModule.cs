@@ -14,7 +14,7 @@ public class HotKeyModule
     private const uint VK_SPACE = 0x20;
     private const uint MOD_NONE = 0x0000;
 
-    public event Action OnHotKeyPressed;
+    public event Action OnHotKeyPressed = null!;
 
     public void RegisterHotKey(IntPtr hWnd)
     {

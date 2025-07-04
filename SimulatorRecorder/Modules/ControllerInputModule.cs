@@ -1,17 +1,21 @@
 ﻿using Silk.NET.XInput;
-using System.Reflection.Metadata;
+using System.Collections.Specialized;
 namespace SimulatorRecorder.Modules
 {
     internal class ControllerInputModule
     {
-        private List<GamepadInput> buffer;
+        private OutputModule outputModule;
+        private List<OutputValue> buffer;
+        private List<GamepadInput> bufferGameInput;
         private XInput xinput;
         private State state;
         private int curIndex;
         private uint controllerIndex = 0;
         public ControllerInputModule()
         {
-            buffer = new List<GamepadInput>();
+            outputModule = new OutputModule();
+            buffer = new List<OutputValue>();
+            bufferGameInput = new List<GamepadInput>();
             xinput = XInput.GetApi();
             state = new State();
             curIndex = -1;
@@ -52,13 +56,39 @@ namespace SimulatorRecorder.Modules
             return value / 255f;
         }
 
+        private float IsPressDown(int i, GamepadInputValue input)
+        {
+            if(GetPreState() == null)
+            {
+                return 0f;
+            }
+
+            if (GetPreState().values[i].buttonValue <= 0.1f && input.buttonValue >= 0.9f)
+            {
+                if (!input.buttonPressDown)
+                {
+                    input.buttonPressDown = true;
+                    return 1.0f;
+                }
+                else
+                {
+                    return 1.0f;
+                }
+            }
+
+            if (input.buttonValue <= 0.1f)
+            {
+                input.buttonPressDown = false;
+            }
+            return 0f;
+        }
+
         public void GetButton()
         {
             if (GetState() == null)
             {
                 return;
             }
-            ++curIndex;
             List<GamepadInputValue> temp = new List<GamepadInputValue>();
             GamepadInput curState = new GamepadInput();
             ushort wButtons = state.Gamepad.WButtons;
@@ -70,9 +100,10 @@ namespace SimulatorRecorder.Modules
 
                 GamepadInputValue input = new GamepadInputValue(
                     MyConstant.buttonsName[i],
-                    isPressed ? 1f : 0f
+                    isPressed ? 1.0f : 0.0f
                 );
-                if (isPressed)
+
+                if (IsPressDown(i, input) != 0)
                 {
                     Console.WriteLine($"{button} 버튼 눌림");
                 }
@@ -98,16 +129,34 @@ namespace SimulatorRecorder.Modules
             {
                 Console.WriteLine($"RTrigger 버튼 눌림 {curState.values[17].buttonValue}");
             }
-            buffer.Add(curState);
+
+            outputModule.SetOutput(curState.time, curState.values);
+            ++curIndex;
+            buffer.Add(outputModule.GetOutputValue());
+            bufferGameInput.Add(curState);
         }
-        public List<GamepadInput> GetBuffer()
+        public List<OutputValue> GetBuffer()
         {
             return buffer;
         }
-        public GamepadInput GetCurState()
+        private GamepadInput GetPreState()
         {
-            return buffer[curIndex];
+            if(curIndex < 0)
+            {
+                return null!;
+            }
+
+            return bufferGameInput[curIndex];
         }
 
+        public string GetOutput(string key)
+        {
+            return outputModule.GetOutput(key).ToString();
+        }
+
+        public double GetOutputTime()
+        {
+            return outputModule.GetOutputTime();
+        }
     }
 }

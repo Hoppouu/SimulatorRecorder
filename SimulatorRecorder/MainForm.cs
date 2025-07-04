@@ -31,9 +31,15 @@ namespace SimulatorRecorder
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
+            TimerModule.DoSemiStartTimer();
+            controllerInputMoudle = new ControllerInputModule();
         }
         private void button_start_Click(object sender, EventArgs e)
         {
+            if(FileManager.errorOccurred)
+            {
+                return;
+            }
             if (!TimerModule.IsRun())
             {
                 Console.WriteLine("Start");
@@ -48,23 +54,38 @@ namespace SimulatorRecorder
 
         private void button_end_Click(object sender, EventArgs e)
         {
-            if (TimerModule.IsRun())
+            bool shouldWrite = false;
+            if (FileManager.errorOccurred)
             {
-                FileManager.WriteFile(controllerInputMoudle.GetBuffer());
+                shouldWrite = true;
+            }
+            else if (TimerModule.IsRun())
+            {
                 TimerModule.DoEndTimer();
-                Console.WriteLine("End");
+                shouldWrite = true;
+            }
+
+            if(shouldWrite)
+            {
+                if (FileManager.WriteFile(controllerInputMoudle.GetBuffer()))
+                {
+                    Console.WriteLine("End");
+                }
             }
         }
 
         private void TimerEvent(object sender, EventArgs e)
         {
-            label_elapsed.Text = "진행 시간 : " + TimerModule.GetElapsedTime().ToString("F1");
             controllerInputMoudle.GetButton();
-            GamepadInput temp = controllerInputMoudle.GetCurState();
-            label_LstickX.Text = "L stick X : " + temp.values[12].buttonValue.ToString("F2");
-            label_LstickY.Text = "L stick Y : " + temp.values[13].buttonValue.ToString("F2");
-            label_RstickX.Text = "R stick X : " + temp.values[14].buttonValue.ToString("F2");
-            label_RstickY.Text = "R stick Y : " + temp.values[15].buttonValue.ToString("F2");
+            label_elapsed.Text  = "진행 시간 : " + TimerModule.GetElapsedTime().ToString("F1");
+            ROLL.Text           = "ROLL    : " + controllerInputMoudle.GetOutput("ROLL");
+            PITCH.Text          = "PITCH   : " + controllerInputMoudle.GetOutput("PITCH");
+            YAW.Text            = "YAW     : " + controllerInputMoudle.GetOutput("YAW");
+            SWAY.Text           = "SWAY    : " + controllerInputMoudle.GetOutput("SWAY");
+            SURGE.Text          = "SURGE   : " + controllerInputMoudle.GetOutput("SURGE");
+            HEAVE.Text          = "HEAVE   : " + controllerInputMoudle.GetOutput("HEAVE");
+            SPEED.Text          = "SPEED   : " + controllerInputMoudle.GetOutput("SPEED");
+            BLOWER1.Text        = "BLOWER1 : " + controllerInputMoudle.GetOutput("BLOWER1");
         }
 
         private void HotKeyAction()
@@ -93,7 +114,7 @@ namespace SimulatorRecorder
                 StartPosition = FormStartPosition.CenterScreen,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 MaximizeBox = false,
-                MinimizeBox = false 
+                MinimizeBox = false
             };
 
             TextBox textBox = new TextBox

@@ -27,6 +27,11 @@ namespace SimulatorRecorder.Modules
             isRun = false;
         }
 
+        public static void DoSemiStartTimer()
+        {
+            timer.Enabled = true;
+        }
+
         public static void DoStartTimer()
         {
             timer.Enabled = true;
@@ -48,7 +53,7 @@ namespace SimulatorRecorder.Modules
             }
             else
             {
-                return -1;
+                return 0;
             }
         }
 
@@ -56,5 +61,6 @@ namespace SimulatorRecorder.Modules
         {
             return isRun;
         }
+
     }
 }
