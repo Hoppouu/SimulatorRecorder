@@ -54,6 +54,24 @@ namespace SimulatorRecorder.Modules
 
             return true;
         }
+
+        public static string?[] GetFilePath(string title)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = title;
+            openFileDialog.Filter = "All Files|*.*";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null!;
+            }
+            string fullPath = openFileDialog.FileName;
+            string[] result = new string[2];
+            result[0] = Path.GetDirectoryName(fullPath)!;
+            result[1] = Path.GetFileName(fullPath)!;
+
+            return result;
+        }
+
         public static string GetFolderPath()
         {
             return folderPath;
