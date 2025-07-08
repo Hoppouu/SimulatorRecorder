@@ -3,40 +3,69 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace SimulatorRecorder.Modules
 {
     internal static class FileManager
     {
-        private static string settingFilePath;
-        private static string folderPath;
-        private static string filePath;
+        private static string folderPath = null!;
+        private static string filePath = null!;
         private static int count;
         
         public static bool errorOccurred = false;
 
-        static FileManager()
+        private static Dictionary<string, string> settings = ReadSettings(MyConstant.settingFilePath);
+
+        public static void Init()
         {
-            settingFilePath = Directory.GetCurrentDirectory() + "\\setting.env";
             count = 1;
-            folderPath = LoadFolderPath();
+            LoadEnvFile();
             filePath = Path.Combine(folderPath, $"recordLog_{count++}.csv");
         }
-        public static void SaveFolderPath()
-        {
-            File.WriteAllText(settingFilePath, folderPath);
-        }
 
-        private static string LoadFolderPath()
+        private static void SetSetting(string key, string value)
         {
-            if (File.Exists(settingFilePath))
+            if(settings.ContainsKey(key))
             {
-                return File.ReadAllText(settingFilePath).Trim();
+                settings[key] = value;
             }
-            else
+        }
+        public static void SaveEnvFile()
+        {
+            using (var writer = new StreamWriter(MyConstant.settingFilePath))
             {
-                return Directory.GetCurrentDirectory();
+                foreach (var kv in settings)
+                {
+                    writer.WriteLine($"{kv.Key}={kv.Value}");
+                }
+            }
+        }
+        private static void EnsureEnvFile()
+        {
+            if(!File.Exists(MyConstant.settingFilePath))
+            {
+                using (var writer = new StreamWriter(MyConstant.settingFilePath))
+                {
+                    writer.WriteLine($"folderPath={MyConstant.basePath}");
+                    writer.WriteLine($"windowsPlayerPath={MyConstant.baseWindowsPlayerPath}");
+                    settings["folderPath"] = MyConstant.basePath;
+                    settings["windowsPlayerPath"] = MyConstant.baseWindowsPlayerPath;
+                }
+            }
+         }
+        private static void LoadEnvFile()
+        {
+            EnsureEnvFile();
+            if (settings.ContainsKey("folderPath"))
+            {
+                folderPath = settings["folderPath"];
+            }
+
+            if (settings.ContainsKey("windowsPlayerPath"))
+            {
+                ProgramModule.SetFilePath(settings["windowsPlayerPath"]);
             }
         }
 
@@ -51,7 +80,7 @@ namespace SimulatorRecorder.Modules
             }
             folderPath = folderBrowserDialog.SelectedPath;
             filePath = Path.Combine(folderPath, $"recordLog_{count}.csv");
-
+            SetSetting("folderPath", folderPath);
             return true;
         }
 
@@ -125,6 +154,35 @@ namespace SimulatorRecorder.Modules
                 );
                 return false;
             }
+        }
+
+        private static Dictionary<string, string> ReadSettings(string settingFilePath)
+        {
+            var dict = new Dictionary<string, string>();
+
+            if (!File.Exists(settingFilePath))
+                return dict;
+
+            var lines = File.ReadAllLines(settingFilePath);
+
+            foreach (var line in lines)
+            {
+                var trimmed = line.Trim();
+
+                if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("#") || trimmed.StartsWith(";"))
+                    continue;
+
+                var splitIndex = trimmed.IndexOf('=');
+                if (splitIndex < 0)
+                    continue;
+
+                var key = trimmed.Substring(0, splitIndex).Trim();
+                var value = trimmed.Substring(splitIndex + 1).Trim();
+
+                dict[key] = value;
+            }
+
+            return dict;
         }
     }
 }

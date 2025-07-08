@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace SimulatorRecorder.Modules
 {
     static class ProgramModule
     {
-        static private Process? process;
+        static private Process process = null!;
+        static private string WindowsPlayerPath = MyConstant.baseWindowsPlayerPath;
 
         static public void Launch(string[] args)
         {
             process = new Process();
-            process.StartInfo.FileName = MyConstant.unityDirectoryPath;
+            process.StartInfo.FileName = WindowsPlayerPath;
             process.StartInfo.Arguments = string.Join(" ", args);
             process.Start();
         }
@@ -25,6 +27,10 @@ namespace SimulatorRecorder.Modules
                     process.WaitForExit();
                 }
             }
+        }
+        static public void SetFilePath(string path)
+        {
+            WindowsPlayerPath = path;
         }
     }
 }

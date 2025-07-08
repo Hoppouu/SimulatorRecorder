@@ -10,6 +10,7 @@ namespace SimulatorRecorder
         public MainForm()
         {
             InitializeComponent();
+            FileManager.Init();
             TimerModule.Initialize(this.timer_main, 100);
             controllerInputMoudle = new ControllerInputModule();
             HotKeyModule.OnHotKeyPressed += HotKeyAction;
@@ -20,7 +21,7 @@ namespace SimulatorRecorder
         {
             HotKeyModule.UnregisterHotKey(this.Handle);
             ProgramModule.Close();
-            FileManager.SaveFolderPath();
+            FileManager.SaveEnvFile();
             base.OnFormClosing(e);
         }
 

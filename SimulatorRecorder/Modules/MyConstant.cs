@@ -36,7 +36,9 @@ namespace SimulatorRecorder.Modules
         readonly static private float scaleOffset = (3276.7f) / 3;
         readonly static private float scaleFactor = 2.5f;
 
-        readonly static public string unityDirectoryPath = "C:\\Users\\chosun\\Desktop\\workspace\\Visual Studio\\SimulatorRecorder\\WindowsPlayer\\WindowsPlayer.exe";
+        readonly static public string settingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "setting.env");
+        readonly static public string basePath = AppDomain.CurrentDomain.BaseDirectory;
+        readonly static public string baseWindowsPlayerPath = Path.Combine(basePath, "..\\..\\..\\..\\WindowsPlayer\\WindowsPlayer.exe");
 
         readonly static public string buttonManual = @"
                 LStickX     : ROLL
