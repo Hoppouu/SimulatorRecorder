@@ -41,10 +41,13 @@
             menu1 = new ToolStripMenuItem();
             menu1_1 = new ToolStripMenuItem();
             menu1_2 = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
+            menu1_3 = new ToolStripMenuItem();
             SURGE = new Label();
             HEAVE = new Label();
             SPEED = new Label();
             BLOWER1 = new Label();
+            didFindController = new Label();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -92,8 +95,8 @@
             // 
             button_start.BackColor = Color.FromArgb(192, 255, 192);
             button_start.FlatAppearance.BorderColor = Color.White;
-            button_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button_start.Location = new Point(25, 400);
+            button_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_start.Location = new Point(25, 446);
             button_start.Name = "button_start";
             button_start.Size = new Size(150, 38);
             button_start.TabIndex = 4;
@@ -104,8 +107,8 @@
             // button_end
             // 
             button_end.BackColor = Color.FromArgb(192, 255, 192);
-            button_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
-            button_end.Location = new Point(188, 400);
+            button_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_end.Location = new Point(195, 446);
             button_end.Name = "button_end";
             button_end.Size = new Size(150, 38);
             button_end.TabIndex = 5;
@@ -116,8 +119,8 @@
             // label_elapsed
             // 
             label_elapsed.AutoSize = true;
-            label_elapsed.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label_elapsed.Location = new Point(112, 352);
+            label_elapsed.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
+            label_elapsed.Location = new Point(119, 404);
             label_elapsed.Name = "label_elapsed";
             label_elapsed.Size = new Size(135, 30);
             label_elapsed.TabIndex = 6;
@@ -138,24 +141,37 @@
             // 
             // menu1
             // 
-            menu1.DropDownItems.AddRange(new ToolStripItem[] { menu1_1, menu1_2 });
+            menu1.DropDownItems.AddRange(new ToolStripItem[] { menu1_1, menu1_2, toolStripSeparator1, menu1_3 });
             menu1.Name = "menu1";
-            menu1.Size = new Size(71, 20);
-            menu1.Text = "저장 폴더";
+            menu1.Size = new Size(43, 20);
+            menu1.Text = "옵션";
             // 
             // menu1_1
             // 
             menu1_1.Name = "menu1_1";
-            menu1_1.Size = new Size(154, 22);
+            menu1_1.Size = new Size(180, 22);
             menu1_1.Text = "저장 폴더 설정";
             menu1_1.Click += menu1_1_Click;
             // 
             // menu1_2
             // 
             menu1_2.Name = "menu1_2";
-            menu1_2.Size = new Size(154, 22);
+            menu1_2.Size = new Size(180, 22);
             menu1_2.Text = "저장 폴더 확인";
             menu1_2.Click += menu1_2_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(177, 6);
+            // 
+            // menu1_3
+            // 
+            menu1_3.ImageScaling = ToolStripItemImageScaling.None;
+            menu1_3.Name = "menu1_3";
+            menu1_3.Size = new Size(180, 22);
+            menu1_3.Text = "버튼 설명";
+            menu1_3.Click += menu1_3_Click;
             // 
             // SURGE
             // 
@@ -197,12 +213,25 @@
             BLOWER1.TabIndex = 3;
             BLOWER1.Text = "BLOWER1 : 0";
             // 
+            // didFindController
+            // 
+            didFindController.AutoSize = true;
+            didFindController.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
+            didFindController.ForeColor = Color.Red;
+            didFindController.Location = new Point(44, 364);
+            didFindController.Name = "didFindController";
+            didFindController.Size = new Size(291, 30);
+            didFindController.TabIndex = 8;
+            didFindController.Text = "컨트롤러를 찾을 수 없습니다.";
+            didFindController.Visible = false;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(374, 450);
+            ClientSize = new Size(374, 496);
+            Controls.Add(didFindController);
             Controls.Add(label_elapsed);
             Controls.Add(button_end);
             Controls.Add(button_start);
@@ -245,5 +274,8 @@
         private Label HEAVE;
         private Label SPEED;
         private Label BLOWER1;
+        private Label didFindController;
+        private ToolStripMenuItem menu1_3;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }

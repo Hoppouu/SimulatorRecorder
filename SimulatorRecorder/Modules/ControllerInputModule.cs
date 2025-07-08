@@ -1,5 +1,4 @@
 ﻿using Silk.NET.XInput;
-using System.Collections.Specialized;
 namespace SimulatorRecorder.Modules
 {
     internal class ControllerInputModule
@@ -10,7 +9,6 @@ namespace SimulatorRecorder.Modules
         private XInput xinput;
         private State state;
         private int curIndex;
-        private uint controllerIndex = 0;
         public ControllerInputModule()
         {
             outputModule = new OutputModule();
@@ -21,13 +19,25 @@ namespace SimulatorRecorder.Modules
             curIndex = -1;
         }
 
-        private bool IsConnected()
+        public bool IsConnected()
         {
-            controllerIndex = xinput.GetState(controllerIndex, ref state);
-            return controllerIndex == 0;
+            uint controllerIndex = 0;
+            for (uint i = 0; i < 4; i++)
+            {
+                controllerIndex = i;
+                uint result = xinput.GetState(controllerIndex, ref state);
+
+                if (result == 0)
+                {
+                    //Console.WriteLine($"컨트롤러 {controllerIndex} 연결됨");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        private State? GetState()
+        private State? GetCurState()
         {
             if (IsConnected())
             {
@@ -85,7 +95,7 @@ namespace SimulatorRecorder.Modules
 
         public void GetButton()
         {
-            if (GetState() == null)
+            if (GetCurState() == null)
             {
                 return;
             }
@@ -157,6 +167,11 @@ namespace SimulatorRecorder.Modules
         public double GetOutputTime()
         {
             return outputModule.GetOutputTime();
+        }
+
+        public bool IsStartTimer()
+        {
+            return GetPreState().values[10].buttonPressDown;
         }
     }
 }

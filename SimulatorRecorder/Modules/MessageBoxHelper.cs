@@ -1,4 +1,6 @@
-﻿public static class MessageBoxHelper
+﻿using SimulatorRecorder.Modules;
+
+public static class MessageBoxHelper
 {
     public static DialogResult ShowTopMost(string message, string title,
         MessageBoxButtons buttons = MessageBoxButtons.OK,
@@ -28,5 +30,35 @@
 
             return result;
         }
+    }
+
+    public static void TextBox(int width, int heihgt, string title, string text, bool drag = false)
+    {
+        Form copyForm = new Form
+        {
+            Text = title,
+            Size = new System.Drawing.Size(width, heihgt),
+            StartPosition = FormStartPosition.CenterScreen,
+            FormBorderStyle = FormBorderStyle.FixedDialog,
+            MaximizeBox = false,
+            MinimizeBox = false
+        };
+
+        TextBox textBox = new TextBox
+        {
+            Multiline = true,
+            ReadOnly = true,
+            Text = text,
+            Dock = DockStyle.Fill,
+            ScrollBars = ScrollBars.None,
+            Font = new System.Drawing.Font("Consolas", 12)
+        };
+
+        copyForm.Controls.Add(textBox);
+        if(!drag)
+        {
+            copyForm.Shown += (s, e) => copyForm.ActiveControl = null;
+        }
+        copyForm.ShowDialog();
     }
 }

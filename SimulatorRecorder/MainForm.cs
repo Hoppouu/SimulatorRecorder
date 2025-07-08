@@ -36,7 +36,7 @@ namespace SimulatorRecorder
         }
         private void button_start_Click(object sender, EventArgs e)
         {
-            if(FileManager.errorOccurred)
+            if (FileManager.errorOccurred)
             {
                 return;
             }
@@ -62,10 +62,11 @@ namespace SimulatorRecorder
             else if (TimerModule.IsRun())
             {
                 TimerModule.DoEndTimer();
+                TimerModule.DoSemiStartTimer();
                 shouldWrite = true;
             }
 
-            if(shouldWrite)
+            if (shouldWrite)
             {
                 if (FileManager.WriteFile(controllerInputMoudle.GetBuffer()))
                 {
@@ -76,19 +77,34 @@ namespace SimulatorRecorder
 
         private void TimerEvent(object sender, EventArgs e)
         {
+            if (!controllerInputMoudle.IsConnected())
+            {
+                didFindController.Visible = true;
+                return;
+            }
+            else
+            {
+                didFindController.Visible = false;
+            }
+
             controllerInputMoudle.GetButton();
-            label_elapsed.Text  = "진행 시간 : " + TimerModule.GetElapsedTime().ToString("F1");
-            ROLL.Text           = "ROLL    : " + controllerInputMoudle.GetOutput("ROLL");
-            PITCH.Text          = "PITCH   : " + controllerInputMoudle.GetOutput("PITCH");
-            YAW.Text            = "YAW     : " + controllerInputMoudle.GetOutput("YAW");
-            SWAY.Text           = "SWAY    : " + controllerInputMoudle.GetOutput("SWAY");
-            SURGE.Text          = "SURGE   : " + controllerInputMoudle.GetOutput("SURGE");
-            HEAVE.Text          = "HEAVE   : " + controllerInputMoudle.GetOutput("HEAVE");
-            SPEED.Text          = "SPEED   : " + controllerInputMoudle.GetOutput("SPEED");
-            BLOWER1.Text        = "BLOWER1 : " + controllerInputMoudle.GetOutput("BLOWER1");
+            if (controllerInputMoudle.IsStartTimer())
+            {
+                TimerManage();
+            }
+
+            label_elapsed.Text = "진행 시간 : " + TimerModule.GetElapsedTime().ToString("F1");
+            ROLL.Text = "ROLL    : " + controllerInputMoudle.GetOutput("ROLL");
+            PITCH.Text = "PITCH   : " + controllerInputMoudle.GetOutput("PITCH");
+            YAW.Text = "YAW     : " + controllerInputMoudle.GetOutput("YAW");
+            SWAY.Text = "SWAY    : " + controllerInputMoudle.GetOutput("SWAY");
+            SURGE.Text = "SURGE   : " + controllerInputMoudle.GetOutput("SURGE");
+            HEAVE.Text = "HEAVE   : " + controllerInputMoudle.GetOutput("HEAVE");
+            SPEED.Text = "SPEED   : " + controllerInputMoudle.GetOutput("SPEED");
+            BLOWER1.Text = "BLOWER1 : " + controllerInputMoudle.GetOutput("BLOWER1");
         }
 
-        private void HotKeyAction()
+        private void TimerManage()
         {
             if (!TimerModule.IsRun())
             {
@@ -98,6 +114,12 @@ namespace SimulatorRecorder
             {
                 button_end.PerformClick();
             }
+            hotKeyModule.SendHotKeySignal();
+        }
+
+        private void HotKeyAction()
+        {
+            TimerManage();
         }
 
         private void menu1_1_Click(object sender, EventArgs e)
@@ -107,28 +129,13 @@ namespace SimulatorRecorder
 
         private void menu1_2_Click(object sender, EventArgs e)
         {
-            Form copyForm = new Form
-            {
-                Text = "폴더 경로",
-                Size = new System.Drawing.Size(500, 100),
-                StartPosition = FormStartPosition.CenterScreen,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
-                MinimizeBox = false
-            };
-
-            TextBox textBox = new TextBox
-            {
-                Multiline = true,
-                ReadOnly = true,
-                Text = FileManager.GetFolderPath(),
-                Dock = DockStyle.Fill,
-                ScrollBars = ScrollBars.None,
-                Font = new System.Drawing.Font("Consolas", 12)
-            };
-
-            copyForm.Controls.Add(textBox);
-            copyForm.ShowDialog();
+            MessageBoxHelper.TextBox(500, 100, "폴더 경로", FileManager.GetFolderPath(), true);
+        }
+        
+        private void menu1_3_Click(object sender, EventArgs e)
+        {
+            string str = MyConstant.buttonManual;
+            MessageBoxHelper.TextBox(500, 400, "버튼 설명", str);
         }
     }
 }

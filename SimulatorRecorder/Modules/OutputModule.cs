@@ -21,6 +21,7 @@ namespace SimulatorRecorder.Modules
         private bool IsDeadZone(GamepadInputValue input)
         {
             bool isExistList = MyConstant.deadZoneList[input.buttonName];
+
             bool isDeadZone = Math.Abs(input.buttonValue) < MyConstant.deadZone;
             return isExistList && isDeadZone;
         }
@@ -49,6 +50,15 @@ namespace SimulatorRecorder.Modules
                     continue;
                 }
 
+                if (values[i].buttonName == "B")
+                {
+                    if (values[i].buttonPressDown)
+                    {
+                        outputValue.SetInitOutputData();
+                    }
+                    continue;
+                }
+
 
                 string buttonMapping = MyConstant.keyMapping[values[i].buttonName];
                 float buttonOffset = MyConstant.keyOffest[values[i].buttonName];
@@ -59,7 +69,7 @@ namespace SimulatorRecorder.Modules
                         outputValue.ToggleValue(buttonMapping, buttonOffset);
                     }
                 }
-                else if(values[i].buttonName == "LTrigger" || values[i].buttonName == "RTrigger")
+                else if (values[i].buttonName == "LTrigger" || values[i].buttonName == "RTrigger")
                 {
                     outputValue.AddValue(buttonMapping, values[i].buttonValue * buttonOffset);
                 }

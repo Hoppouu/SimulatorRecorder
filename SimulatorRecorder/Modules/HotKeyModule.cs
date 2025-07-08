@@ -1,6 +1,6 @@
-﻿using System;
+﻿using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
+using System.Text;
 
 public class HotKeyModule
 {
@@ -33,5 +33,12 @@ public class HotKeyModule
         {
             OnHotKeyPressed.Invoke();
         }
+    }
+
+    public void SendHotKeySignal()
+    {
+        using var udpClient = new UdpClient();
+        byte[] data = Encoding.UTF8.GetBytes("SPACE_PRESSED");
+        udpClient.Send(data, data.Length, "127.0.0.1", 12345);
     }
 }

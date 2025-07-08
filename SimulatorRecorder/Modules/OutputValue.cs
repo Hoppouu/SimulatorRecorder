@@ -13,6 +13,15 @@ namespace SimulatorRecorder.Modules
                 outputData.Add(MyConstant.outputsName[i], MyConstant.outputsInit[i]);
             }
         }
+
+        public void SetInitOutputData()
+        {
+            for (int i = 0; i < MyConstant.outputsName.Length; i++)
+            {
+                outputData[MyConstant.outputsName[i]] = MyConstant.outputsInit[i];
+            }
+        }
+
         public bool SetValue(string key, float value)
         {
             if (!outputData.ContainsKey(key))

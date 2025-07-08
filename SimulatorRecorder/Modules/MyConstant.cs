@@ -37,6 +37,24 @@ namespace SimulatorRecorder.Modules
         readonly static private float scaleOffset = (3276.7f) / 3;
         readonly static private float scaleFactor = 2.5f;
 
+        readonly static public string buttonManual = @"
+                LStickX     : ROLL
+
+                LStickY     : PITCH
+
+                RStickX     : YAW
+
+                LTrigger    : HEAVE
+
+                RTrigger    : HEAVE
+
+                A           : BLOWER1
+
+                B           : 버튼 값 리셋 버튼
+
+                X           : 레코딩 시작/종료
+
+            ";
 
         static MyConstant()
         {
@@ -76,6 +94,7 @@ namespace SimulatorRecorder.Modules
                 { "LTrigger", "HEAVE" },
                 { "RTrigger", "HEAVE" },
                 { "A", "BLOWER1" },
+                { "B", "" }
             };
 
             keyOffest = new Dictionary<string, float>
@@ -86,6 +105,7 @@ namespace SimulatorRecorder.Modules
                 { "LTrigger", -scaleOffset * scaleFactor},
                 { "RTrigger", scaleOffset * scaleFactor},
                 { "A", 60f },
+                { "B", 1f }
             };
 
             outputRange = new Dictionary<string, int>
@@ -135,6 +155,7 @@ namespace SimulatorRecorder.Modules
                 { "LTrigger", false },
                 { "RTrigger", false },
                 { "A", false },
+                { "B", false },
             };
         }
     }
