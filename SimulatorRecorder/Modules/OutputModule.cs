@@ -59,7 +59,6 @@ namespace SimulatorRecorder.Modules
                     continue;
                 }
 
-
                 string buttonMapping = MyConstant.keyMapping[values[i].buttonName];
                 float buttonOffset = MyConstant.keyOffest[values[i].buttonName];
                 if (values[i].buttonName == "A")

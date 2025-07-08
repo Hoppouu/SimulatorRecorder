@@ -16,7 +16,7 @@ namespace SimulatorRecorder.Modules
 
         public void SetInitOutputData()
         {
-            for (int i = 0; i < MyConstant.outputsName.Length; i++)
+            for (int i = 1; i < MyConstant.outputsName.Length; i++)
             {
                 outputData[MyConstant.outputsName[i]] = MyConstant.outputsInit[i];
             }

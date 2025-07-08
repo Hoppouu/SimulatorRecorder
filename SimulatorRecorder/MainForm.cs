@@ -48,6 +48,7 @@ namespace SimulatorRecorder
             {
                 Console.WriteLine("ReStart");
             }
+            hotKeyModule.SendHotKeySignal();
             TimerModule.DoStartTimer();
             controllerInputMoudle = new ControllerInputModule();
         }
@@ -55,14 +56,10 @@ namespace SimulatorRecorder
         private void button_end_Click(object sender, EventArgs e)
         {
             bool shouldWrite = false;
-            if (FileManager.errorOccurred)
-            {
-                shouldWrite = true;
-            }
-            else if (TimerModule.IsRun())
+            if (FileManager.errorOccurred || TimerModule.IsRun())
             {
                 TimerModule.DoEndTimer();
-                TimerModule.DoSemiStartTimer();
+                hotKeyModule.SendHotKeySignal();
                 shouldWrite = true;
             }
 
@@ -71,6 +68,7 @@ namespace SimulatorRecorder
                 if (FileManager.WriteFile(controllerInputMoudle.GetBuffer()))
                 {
                     Console.WriteLine("End");
+                    TimerModule.DoSemiStartTimer();
                 }
             }
         }
@@ -114,7 +112,6 @@ namespace SimulatorRecorder
             {
                 button_end.PerformClick();
             }
-            hotKeyModule.SendHotKeySignal();
         }
 
         private void HotKeyAction()
