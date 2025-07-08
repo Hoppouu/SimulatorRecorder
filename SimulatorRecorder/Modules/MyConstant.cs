@@ -1,5 +1,4 @@
 ﻿using Silk.NET.XInput;
-using System.Security.Cryptography.X509Certificates;
 namespace SimulatorRecorder.Modules
 {
     [Flags]
@@ -36,6 +35,8 @@ namespace SimulatorRecorder.Modules
         readonly static public float deadZone = 0.2f;
         readonly static private float scaleOffset = (3276.7f) / 3;
         readonly static private float scaleFactor = 2.5f;
+
+        readonly static public string unityDirectoryPath = "C:\\Users\\chosun\\Desktop\\workspace\\Visual Studio\\SimulatorRecorder\\WindowsPlayer\\WindowsPlayer.exe";
 
         readonly static public string buttonManual = @"
                 LStickX     : ROLL
