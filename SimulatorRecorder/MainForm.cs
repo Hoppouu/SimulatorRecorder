@@ -1,32 +1,32 @@
 using SimulatorRecorder.Modules;
+using System.Diagnostics;
 using System.Windows.Forms;
 namespace SimulatorRecorder
 {
     public partial class MainForm : Form
     {
         private ControllerInputModule controllerInputMoudle;
-        private HotKeyModule hotKeyModule;
 
         public MainForm()
         {
             InitializeComponent();
             TimerModule.Initialize(this.timer_main, 100);
             controllerInputMoudle = new ControllerInputModule();
-            hotKeyModule = new HotKeyModule();
-            hotKeyModule.OnHotKeyPressed += HotKeyAction;
-            hotKeyModule.RegisterHotKey(this.Handle);
+            HotKeyModule.OnHotKeyPressed += HotKeyAction;
+            HotKeyModule.RegisterHotKey(this.Handle);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            HotKeyModule.UnregisterHotKey(this.Handle);
+            ProgramModule.Close();
             FileManager.SaveFolderPath();
-            hotKeyModule.UnregisterHotKey(this.Handle);
             base.OnFormClosing(e);
         }
 
         protected override void WndProc(ref Message m)
         {
-            hotKeyModule.ProcessHotKeyMessage(ref m);
+            HotKeyModule.ProcessHotKeyMessage(ref m);
             base.WndProc(ref m);
         }
         private void MainForm_Load(object sender, EventArgs e)
@@ -48,7 +48,7 @@ namespace SimulatorRecorder
             {
                 Console.WriteLine("ReStart");
             }
-            hotKeyModule.SendHotKeySignal();
+            HotKeyModule.SendHotKeySignal();
             TimerModule.DoStartTimer();
             controllerInputMoudle = new ControllerInputModule();
         }
@@ -59,7 +59,7 @@ namespace SimulatorRecorder
             if (FileManager.errorOccurred || TimerModule.IsRun())
             {
                 TimerModule.DoEndTimer();
-                hotKeyModule.SendHotKeySignal();
+                HotKeyModule.SendHotKeySignal();
                 shouldWrite = true;
             }
 
@@ -128,11 +128,20 @@ namespace SimulatorRecorder
         {
             MessageBoxHelper.TextBox(500, 100, "폴더 경로", FileManager.GetFolderPath(), true);
         }
-        
+
         private void menu1_3_Click(object sender, EventArgs e)
         {
             string str = MyConstant.buttonManual;
             MessageBoxHelper.TextBox(500, 400, "버튼 설명", str);
+        }
+
+        private void button_SelectVideo_Click(object sender, EventArgs e)
+        {
+            string?[] path = FileManager.GetFilePath("동영상 파일 선택");
+            if(path != null)
+            {
+                ProgramModule.Launch(path!);
+            }
         }
     }
 }
