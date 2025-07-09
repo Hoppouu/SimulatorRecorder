@@ -13,7 +13,6 @@ namespace SimulatorRecorder.Modules
         private static string folderPath = null!;
         private static string filePath = null!;
         private static int count;
-        
         public static bool errorOccurred = false;
 
         private static Dictionary<string, string> settings = ReadSettings(MyConstant.settingFilePath);
@@ -32,6 +31,36 @@ namespace SimulatorRecorder.Modules
                 settings[key] = value;
             }
         }
+
+        private static void LoadEnvFile()
+        {
+            EnsureEnvFile();
+            if (settings.ContainsKey("folderPath"))
+            {
+                if (settings["folderPath"] == MyConstant.basePath)
+                {
+                    folderPath = Path.Combine(MyConstant.basePath, "outputs");
+                }
+                else
+                {
+                    folderPath = settings["folderPath"];
+                }
+            }
+
+            if (settings.ContainsKey("windowsPlayerPath"))
+            {
+                MyConstant.SetwindowsPlayerPath(settings["windowsPlayerPath"]);
+            }
+
+            if (settings.ContainsKey("deadZone"))
+            {
+                if (float.TryParse(settings["deadZone"], out float value))
+                {
+                    MyConstant.SetDeadZone(value);
+                }
+            }
+        }
+
         public static void SaveEnvFile()
         {
             using (var writer = new StreamWriter(MyConstant.settingFilePath))
@@ -42,74 +71,15 @@ namespace SimulatorRecorder.Modules
                 }
             }
         }
-        private static void EnsureEnvFile()
-        {
-            if(!File.Exists(MyConstant.settingFilePath))
-            {
-                using (var writer = new StreamWriter(MyConstant.settingFilePath))
-                {
-                    writer.WriteLine($"folderPath={MyConstant.basePath}");
-                    writer.WriteLine($"windowsPlayerPath={MyConstant.baseWindowsPlayerPath}");
-                    settings["folderPath"] = MyConstant.basePath;
-                    settings["windowsPlayerPath"] = MyConstant.baseWindowsPlayerPath;
-                }
-            }
-         }
-        private static void LoadEnvFile()
-        {
-            EnsureEnvFile();
-            if (settings.ContainsKey("folderPath"))
-            {
-                folderPath = settings["folderPath"];
-            }
-
-            if (settings.ContainsKey("windowsPlayerPath"))
-            {
-                ProgramModule.SetFilePath(settings["windowsPlayerPath"]);
-            }
-        }
-
-        public static bool SetFilePath()
-        {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.SelectedPath = folderPath;
-
-            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
-            {
-                return false;
-            }
-            folderPath = folderBrowserDialog.SelectedPath;
-            filePath = Path.Combine(folderPath, $"recordLog_{count}.csv");
-            SetSetting("folderPath", folderPath);
-            return true;
-        }
-
-        public static string?[] GetFilePath(string title)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = title;
-            openFileDialog.Filter = "All Files|*.*";
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
-            {
-                return null!;
-            }
-            string fullPath = openFileDialog.FileName;
-            string[] result = new string[2];
-            result[0] = Path.GetDirectoryName(fullPath)!;
-            result[1] = Path.GetFileName(fullPath)!;
-
-            return result;
-        }
-
-        public static string GetFolderPath()
-        {
-            return folderPath;
-        }
 
         public static bool WriteFile(List<OutputValue> outputs)
         {
             try
             {
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
                     String t = "";
@@ -153,6 +123,88 @@ namespace SimulatorRecorder.Modules
                     MessageBoxIcon.Error
                 );
                 return false;
+            }
+        }
+
+
+        public static bool SetUnityFilePath(string title)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = title;
+            openFileDialog.Filter = "All Files|*.*";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return false;
+            }
+
+            MyConstant.SetwindowsPlayerPath(openFileDialog.FileName);
+            SetSetting("windowsPlayerPath", MyConstant.GetwindowsPlayerPath());
+            return true;
+        }
+        public static bool SetSaveFilePath()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = folderPath;
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+            {
+                return false;
+            }
+            folderPath = folderBrowserDialog.SelectedPath;
+            filePath = Path.Combine(folderPath, $"recordLog_{count}.csv");
+            SetSetting("folderPath", folderPath);
+            return true;
+        }
+
+        public static void SetDeadZone()
+        {
+            int value = MessageBoxHelper.InputBox("데드존 설정", "값 설정 (범위 : 0 ~ 100 사이 값)", (int)(MyConstant.GetDeadZone() * 100));
+
+            if(!(0 <= value && value <= 100))
+            {
+                return;
+            }
+
+            float deadZone = (float)value / 100f;
+            MyConstant.SetDeadZone(deadZone);
+            SetSetting("deadZone", deadZone.ToString("F2"));
+        }
+
+        public static string?[] SetFilePath(string title)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = title;
+            openFileDialog.Filter = "All Files|*.*";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null!;
+            }
+            string fullPath = openFileDialog.FileName;
+            string[] result = new string[2];
+            result[0] = Path.GetDirectoryName(fullPath)!;
+            result[1] = Path.GetFileName(fullPath)!;
+
+            return result;
+        }
+
+        public static string GetFolderPath()
+        {
+            return folderPath;
+        }
+
+        private static void EnsureEnvFile()
+        {
+            if (!File.Exists(MyConstant.settingFilePath))
+            {
+                using (var writer = new StreamWriter(MyConstant.settingFilePath))
+                {
+                    writer.WriteLine($"folderPath={MyConstant.baseWindowsPlayerPath}");
+                    writer.WriteLine($"windowsPlayerPath={MyConstant.GetwindowsPlayerPath()}");
+                    writer.WriteLine($"deadZone={MyConstant.GetDeadZone().ToString("F2")}");
+                    settings["folderPath"] = MyConstant.basePath;
+                    settings["windowsPlayerPath"] = MyConstant.baseWindowsPlayerPath;
+                    settings["deadZibe"] = MyConstant.GetDeadZone().ToString("F2");
+                }
             }
         }
 

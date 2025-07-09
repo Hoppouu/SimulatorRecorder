@@ -93,14 +93,14 @@ namespace SimulatorRecorder
             }
 
             label_elapsed.Text = "진행 시간 : " + TimerModule.GetElapsedTime().ToString("F1");
-            ROLL.Text = "ROLL    : " + controllerInputMoudle.GetOutput("ROLL");
-            PITCH.Text = "PITCH   : " + controllerInputMoudle.GetOutput("PITCH");
-            YAW.Text = "YAW     : " + controllerInputMoudle.GetOutput("YAW");
-            SWAY.Text = "SWAY    : " + controllerInputMoudle.GetOutput("SWAY");
-            SURGE.Text = "SURGE   : " + controllerInputMoudle.GetOutput("SURGE");
-            HEAVE.Text = "HEAVE   : " + controllerInputMoudle.GetOutput("HEAVE");
-            SPEED.Text = "SPEED   : " + controllerInputMoudle.GetOutput("SPEED");
-            BLOWER1.Text = "BLOWER1 : " + controllerInputMoudle.GetOutput("BLOWER1");
+            ROLL.Text = "ROLL    : "        +       controllerInputMoudle.GetOutput("ROLL");
+            PITCH.Text = "PITCH   : "       +       controllerInputMoudle.GetOutput("PITCH");
+            YAW.Text = "YAW     : "         +       controllerInputMoudle.GetOutput("YAW");
+            SWAY.Text = "SWAY    : "        +       controllerInputMoudle.GetOutput("SWAY");
+            SURGE.Text = "SURGE   : "       +       controllerInputMoudle.GetOutput("SURGE");
+            HEAVE.Text = "HEAVE   : "       +       controllerInputMoudle.GetOutput("HEAVE");
+            SPEED.Text = "SPEED   : "       +       controllerInputMoudle.GetOutput("SPEED");
+            BLOWER1.Text = "BLOWER1 : "     +       controllerInputMoudle.GetOutput("BLOWER1");
         }
 
         private void TimerManage()
@@ -120,29 +120,46 @@ namespace SimulatorRecorder
             TimerManage();
         }
 
-        private void menu1_1_Click(object sender, EventArgs e)
+        private void menu1_setSavePath_Click(object sender, EventArgs e)
         {
-            FileManager.SetFilePath();
+            FileManager.SetSaveFilePath();
         }
 
-        private void menu1_2_Click(object sender, EventArgs e)
+        private void menu1_getSavePath_Click(object sender, EventArgs e)
         {
             MessageBoxHelper.TextBox(500, 100, "폴더 경로", FileManager.GetFolderPath(), true);
         }
-
-        private void menu1_3_Click(object sender, EventArgs e)
+        private void menu1_setUnityPath_Click(object sender, EventArgs e)
         {
-            string str = MyConstant.buttonManual;
-            MessageBoxHelper.TextBox(500, 400, "버튼 설명", str);
+            FileManager.SetUnityFilePath("WindowsPlayer를 선택해주세요");
+        }
+        private void menu1_deadzon_Click(object sender, EventArgs e)
+        {
+            FileManager.SetDeadZone();
+        }
+        private void menu1_manual_Click(object sender, EventArgs e)
+        {
+            string str = MyConstant.manual;
+            MessageBoxHelper.TextBox(500, 400, "사용 설명", str);
         }
 
         private void button_SelectVideo_Click(object sender, EventArgs e)
         {
-            string?[] path = FileManager.GetFilePath("동영상 파일 선택");
-            if(path != null)
+            string?[] path = FileManager.SetFilePath("동영상 파일 선택");
+            if (path != null)
             {
                 ProgramModule.Launch(path!);
             }
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void menu1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -39,10 +39,12 @@
             timer_main = new System.Windows.Forms.Timer(components);
             menuStrip1 = new MenuStrip();
             menu1 = new ToolStripMenuItem();
-            menu1_1 = new ToolStripMenuItem();
-            menu1_2 = new ToolStripMenuItem();
+            menu1_deadzon = new ToolStripMenuItem();
+            menu1_manual = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
-            menu1_3 = new ToolStripMenuItem();
+            menu1_setSavePath = new ToolStripMenuItem();
+            menu1_getSavePath = new ToolStripMenuItem();
+            menu1_setUnityPath = new ToolStripMenuItem();
             SURGE = new Label();
             HEAVE = new Label();
             SPEED = new Label();
@@ -142,37 +144,52 @@
             // 
             // menu1
             // 
-            menu1.DropDownItems.AddRange(new ToolStripItem[] { menu1_1, menu1_2, toolStripSeparator1, menu1_3 });
+            menu1.DropDownItems.AddRange(new ToolStripItem[] { menu1_deadzon, menu1_manual, toolStripSeparator1, menu1_setSavePath, menu1_getSavePath, menu1_setUnityPath });
             menu1.Name = "menu1";
             menu1.Size = new Size(43, 20);
             menu1.Text = "옵션";
+            menu1.Click += menu1_Click;
             // 
-            // menu1_1
+            // menu1_deadzon
             // 
-            menu1_1.Name = "menu1_1";
-            menu1_1.Size = new Size(154, 22);
-            menu1_1.Text = "저장 폴더 설정";
-            menu1_1.Click += menu1_1_Click;
+            menu1_deadzon.Name = "menu1_deadzon";
+            menu1_deadzon.Size = new Size(180, 22);
+            menu1_deadzon.Text = "데드존 설정";
+            menu1_deadzon.Click += menu1_deadzon_Click;
             // 
-            // menu1_2
+            // menu1_manual
             // 
-            menu1_2.Name = "menu1_2";
-            menu1_2.Size = new Size(154, 22);
-            menu1_2.Text = "저장 폴더 확인";
-            menu1_2.Click += menu1_2_Click;
+            menu1_manual.ImageScaling = ToolStripItemImageScaling.None;
+            menu1_manual.Name = "menu1_manual";
+            menu1_manual.Size = new Size(180, 22);
+            menu1_manual.Text = "사용 설명";
+            menu1_manual.Click += menu1_manual_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(151, 6);
+            toolStripSeparator1.Size = new Size(177, 6);
             // 
-            // menu1_3
+            // menu1_setSavePath
             // 
-            menu1_3.ImageScaling = ToolStripItemImageScaling.None;
-            menu1_3.Name = "menu1_3";
-            menu1_3.Size = new Size(154, 22);
-            menu1_3.Text = "버튼 설명";
-            menu1_3.Click += menu1_3_Click;
+            menu1_setSavePath.Name = "menu1_setSavePath";
+            menu1_setSavePath.Size = new Size(180, 22);
+            menu1_setSavePath.Text = "저장 폴더 설정";
+            menu1_setSavePath.Click += menu1_setSavePath_Click;
+            // 
+            // menu1_getSavePath
+            // 
+            menu1_getSavePath.Name = "menu1_getSavePath";
+            menu1_getSavePath.Size = new Size(180, 22);
+            menu1_getSavePath.Text = "저장 폴더 확인";
+            menu1_getSavePath.Click += menu1_getSavePath_Click;
+            // 
+            // menu1_setUnityPath
+            // 
+            menu1_setUnityPath.Name = "menu1_setUnityPath";
+            menu1_setUnityPath.Size = new Size(180, 22);
+            menu1_setUnityPath.Text = "유니티 파일 설정";
+            menu1_setUnityPath.Click += menu1_setUnityPath_Click;
             // 
             // SURGE
             // 
@@ -283,15 +300,17 @@
         private System.Windows.Forms.Timer timer_main;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem menu1;
-        private ToolStripMenuItem menu1_1;
-        private ToolStripMenuItem menu1_2;
+        private ToolStripMenuItem menu1_setSavePath;
+        private ToolStripMenuItem menu1_getSavePath;
         private Label SURGE;
         private Label HEAVE;
         private Label SPEED;
         private Label BLOWER1;
         private Label didFindController;
-        private ToolStripMenuItem menu1_3;
+        private ToolStripMenuItem menu1_manual;
         private ToolStripSeparator toolStripSeparator1;
         private Button button_SelectVideo;
+        private ToolStripMenuItem menu1_setUnityPath;
+        private ToolStripMenuItem menu1_deadzon;
     }
 }

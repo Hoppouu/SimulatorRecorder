@@ -22,7 +22,7 @@ namespace SimulatorRecorder.Modules
         {
             bool isExistList = MyConstant.deadZoneList[input.buttonName];
 
-            bool isDeadZone = Math.Abs(input.buttonValue) < MyConstant.deadZone;
+            bool isDeadZone = Math.Abs(input.buttonValue) < MyConstant.GetDeadZone();
             return isExistList && isDeadZone;
         }
         private void InitOutput(string buttonName)

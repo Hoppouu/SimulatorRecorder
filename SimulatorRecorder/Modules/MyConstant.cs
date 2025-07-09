@@ -32,15 +32,17 @@ namespace SimulatorRecorder.Modules
         readonly static public Dictionary<string, int> outputsInitDict;
         readonly static public Dictionary<string, bool> deadZoneList;
 
-        readonly static public float deadZone = 0.2f;
         readonly static private float scaleOffset = (3276.7f) / 3;
         readonly static private float scaleFactor = 2.5f;
 
         readonly static public string settingFilePath = Path.Combine(Directory.GetCurrentDirectory(), "setting.env");
         readonly static public string basePath = AppDomain.CurrentDomain.BaseDirectory;
-        readonly static public string baseWindowsPlayerPath = Path.Combine(basePath, "..\\..\\..\\..\\WindowsPlayer\\WindowsPlayer.exe");
+        readonly static public string baseWindowsPlayerPath = ".\\WindowsPlayer\\WindowsPlayer.exe";
 
-        readonly static public string buttonManual = @"
+        static private string windowsPlayerPath = Path.Combine(basePath, "WindowsPlayer\\WindowsPlayer.exe");
+        static private float deadZone = 0.2f;
+
+        readonly static public string manual = @"
                 LStickX     : ROLL
 
                 LStickY     : PITCH
@@ -51,11 +53,11 @@ namespace SimulatorRecorder.Modules
 
                 RTrigger    : HEAVE
 
-                A           : BLOWER1
+                    A       : BLOWER1
 
-                B           : 버튼 값 리셋 버튼
+                    B       : 버튼 값 리셋 버튼
 
-                X           : 레코딩 시작/종료
+                    X       : 레코딩 시작/종료
 
             ";
 
@@ -160,6 +162,25 @@ namespace SimulatorRecorder.Modules
                 { "A", false },
                 { "B", false },
             };
+        }
+
+        public static void SetDeadZone(float x)
+        {
+            deadZone = x;
+        }
+
+        public static float GetDeadZone()
+        {
+            return deadZone;
+        }
+
+        public static void SetwindowsPlayerPath(string x)
+        {
+            windowsPlayerPath = x;
+        }
+        public static string GetwindowsPlayerPath()
+        {
+            return windowsPlayerPath;
         }
     }
 }
