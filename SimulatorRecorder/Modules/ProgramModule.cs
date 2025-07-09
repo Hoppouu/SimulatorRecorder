@@ -15,7 +15,8 @@ namespace SimulatorRecorder.Modules
                 process = new Process();
                 process.StartInfo.FileName = MyConstant.GetwindowsPlayerPath();
 
-                process.StartInfo.Arguments = string.Join(" ", args);
+                //경로 폴더 이름에 공백이 있을 경우 발생하는 버그 픽스
+                process.StartInfo.Arguments = string.Join(" ", args.Select(arg => $"\"{arg}\""));
                 process.Start();
             }
             catch (Win32Exception)
