@@ -203,7 +203,7 @@ namespace SimulatorRecorder.Modules
                     writer.WriteLine($"deadZone={MyConstant.GetDeadZone().ToString("F2")}");
                     settings["folderPath"] = MyConstant.basePath;
                     settings["windowsPlayerPath"] = MyConstant.baseWindowsPlayerPath;
-                    settings["deadZibe"] = MyConstant.GetDeadZone().ToString("F2");
+                    settings["deadZone"] = MyConstant.GetDeadZone().ToString("F2");
                 }
             }
         }
