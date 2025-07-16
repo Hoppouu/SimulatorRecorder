@@ -21,7 +21,7 @@
 //17:RTrigger
 namespace SimulatorRecorder.Modules
 {
-    internal class GamepadInput
+    public class GamepadInput
     {
         public double time;
         public List<GamepadInputValue> values;

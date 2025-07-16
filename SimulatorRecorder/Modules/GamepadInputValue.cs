@@ -3,7 +3,7 @@ using System.Diagnostics.Tracing;
 
 namespace SimulatorRecorder.Modules
 {
-    internal class GamepadInputValue
+    public class GamepadInputValue
     {
         public string buttonName;
         public float buttonValue;

@@ -20,6 +20,33 @@ namespace SimulatorRecorder.Modules
 
     public static class MyConstant
     {
+        //Outputs
+        public const string TIME = "TIME";
+        public const string ROLL = "ROLL";
+        public const string PITCH = "PITCH";
+        public const string YAW = "YAW";
+        public const string SWAY = "SWAY";
+        public const string SURGE = "SURGE";
+        public const string HEAVE = "HEAVE";
+        public const string SPEED = "SPEED";
+        public const string BLOWER1 = "BLOWER1";
+
+
+        //Buttons
+        public const string LStickX = "LStickX";
+        public const string LStickY = "LStickY";
+        public const string RStickX = "RStickX";
+        public const string RStickY = "RStickY";
+        public const string LTrigger = "LTrigger";
+        public const string RTrigger = "RTrigger";
+        public const string LButton = "LButton";
+        public const string RButton = "RButton";
+        public const string A = "A";
+        public const string B = "B";
+        public const string X = "X";
+        public const string Y = "Y";
+
+
         readonly static public string[] buttonsName;
         readonly static public XInputButtons[] buttonsKey;
 
@@ -42,22 +69,22 @@ namespace SimulatorRecorder.Modules
         static private string windowsPlayerPath = Path.Combine(basePath, "WindowsPlayer\\WindowsPlayer.exe");
         static private float deadZone = 0.2f;
 
-        readonly static public string manual = @"
-                LStickX     : ROLL
+        readonly static public string manual = @$"
+                {LStickX}     : {ROLL}
 
-                LStickY     : PITCH
+                {LStickY}     : {PITCH}
 
-                RStickX     : YAW
+                {RStickX}     : {YAW}
 
-                LTrigger    : HEAVE
+                {LTrigger}    : {HEAVE}
 
-                RTrigger    : HEAVE
+                {RTrigger}    : {HEAVE}
 
-                    A       : BLOWER1
+                    {A}       : {BLOWER1}
 
-                    B       : 버튼 값 리셋 버튼
+                    {B}       : 버튼 값 리셋 버튼
 
-                    X       : 레코딩 시작/종료
+                    {X}       : 레코딩 시작/종료
 
             ";
 
@@ -68,15 +95,15 @@ namespace SimulatorRecorder.Modules
 
             outputsName = new string[]
             {
-                "TIME",
-                "ROLL",
-                "PITCH",
-                "YAW",
-                "SWAY",
-                "SURGE",
-                "HEAVE",
-                "SPEED",
-                "BLOWER1"
+                TIME,
+                ROLL,
+                PITCH,
+                YAW,
+                SWAY,
+                SURGE,
+                HEAVE,
+                SPEED,
+                BLOWER1
             };
 
             outputsInit = new int[]
@@ -88,79 +115,79 @@ namespace SimulatorRecorder.Modules
                 10000,  // SWAY
                 10000,  // SURGE
                 10000,  // HEAVE
-                5,      // SPEED
+                30,      // SPEED
                 0       // BLOWER1
             };
             keyMapping = new Dictionary<string, string>
             {
-                { "LStickX", "ROLL"},
-                { "LStickY", "PITCH" },
-                { "RStickX", "YAW" },
-                { "LTrigger", "HEAVE" },
-                { "RTrigger", "HEAVE" },
-                { "A", "BLOWER1" },
-                { "B", "" }
+                { LStickX, ROLL},
+                { LStickY, PITCH },
+                { RStickX, YAW },
+                { LTrigger, HEAVE },
+                { RTrigger, HEAVE },
+                { A, BLOWER1 },
+                { B, "" }
             };
 
             keyOffest = new Dictionary<string, float>
             {
-                { "LStickX", scaleOffset * scaleFactor},
-                { "LStickY", scaleOffset * scaleFactor },
-                { "RStickX", scaleOffset * scaleFactor },
-                { "LTrigger", -scaleOffset * scaleFactor},
-                { "RTrigger", scaleOffset * scaleFactor},
-                { "A", 60f },
-                { "B", 1f }
+                { LStickX, scaleOffset * scaleFactor},
+                { LStickY, scaleOffset * scaleFactor },
+                { RStickX, scaleOffset * scaleFactor },
+                { LTrigger, -scaleOffset * scaleFactor},
+                { RTrigger, scaleOffset * scaleFactor},
+                { A, 60f },
+                { B, 1f }
             };
 
             outputRange = new Dictionary<string, int>
             {
-                { "ROLL_MIN", 1000 },
-                { "ROLL_MAX", 19000 },
+                { ROLL + "_MIN", 1000 },
+                { ROLL + "_MAX", 19000 },
 
-                { "PITCH_MIN", 1000 },
-                { "PITCH_MAX", 19000 },
+                { PITCH + "_MIN", 1000 },
+                { PITCH + "_MAX", 19000 },
 
-                { "YAW_MIN", 1000 },
-                { "YAW_MAX", 19000 },
+                { YAW + "_MIN", 1000 },
+                { YAW + "_MAX", 19000 },
 
-                { "SWAY_MIN", 1000 },
-                { "SWAY_MAX", 19000 },
+                { SWAY + "_MIN", 1000 },
+                { SWAY + "_MAX", 19000 },
 
-                { "SURGE_MIN", 1000 },
-                { "SURGE_MAX", 19000 },
+                { SURGE + "_MIN", 1000 },
+                { SURGE + "_MAX", 19000 },
 
-                { "HEAVE_MIN", 1000 },
-                { "HEAVE_MAX", 19000 },
+                { HEAVE + "_MIN", 1000 },
+                { HEAVE + "_MAX", 19000 },
 
-                { "SPEED_MIN", 3 },
-                { "SPEED_MAX", 200 },
+                { SPEED + "_MIN", 3 },
+                { SPEED + "_MAX", 200 },
 
-                { "BLOWER1_MIN", 0 },
-                { "BLOWER1_MAX", 100 }
+                { BLOWER1 + "_MIN", 0 },
+                { BLOWER1 + "_MAX", 100 }
             };
 
             outputsInitDict = new Dictionary<string, int>
             {
-                { "ROLL", 10000 },
-                { "PITCH", 10000 },
-                { "YAW", 10000 },
-                { "SWAY", 10000 },
-                { "SURGE", 10000 },
-                { "HEAVE", 10000 },
-                { "SPEED", 5 },
-                { "BLOWER1", 0 }
+                { ROLL, 10000 },
+                { PITCH, 10000 },
+                { YAW, 10000 },
+                { SWAY, 10000 },
+                { SURGE, 10000 },
+                { HEAVE, 10000 },
+                { SPEED, 5 },
+                { BLOWER1, 0 }
             };
 
             deadZoneList = new Dictionary<string, bool>
             {
-                { "LStickX", true},
-                { "LStickY", true },
-                { "RStickX", true },
-                { "LTrigger", false },
-                { "RTrigger", false },
-                { "A", false },
-                { "B", false },
+                { LStickX, true},
+                { LStickY, true },
+                { RStickX, true },
+                { LTrigger, false },
+                { RTrigger, false },
+                { A, false },
+                { B, false },
             };
         }
 

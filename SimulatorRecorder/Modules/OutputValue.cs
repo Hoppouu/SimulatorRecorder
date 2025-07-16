@@ -1,10 +1,17 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace SimulatorRecorder.Modules
 {
-    internal class OutputValue
+    public class OutputValue
     {
         private Dictionary<string, int> outputData;
+
+        private ReadOnlyDictionary<string, int> readOnlyOutputData;
+
+        public ReadOnlyDictionary<string, int> OutputData { get => readOnlyOutputData; }
+
         public OutputValue()
         {
             outputData = new Dictionary<string, int>();
@@ -12,82 +19,96 @@ namespace SimulatorRecorder.Modules
             {
                 outputData.Add(MyConstant.outputsName[i], MyConstant.outputsInit[i]);
             }
+            readOnlyOutputData = new ReadOnlyDictionary<string, int>(outputData);
         }
 
-        public void SetInitOutputData()
+        public OutputValue(OutputValue other) : this()
         {
-            for (int i = 1; i < MyConstant.outputsName.Length; i++)
+            for (int i = 0; i < MyConstant.outputsName.Length; i++)
             {
-                outputData[MyConstant.outputsName[i]] = MyConstant.outputsInit[i];
+                outputData[MyConstant.outputsName[i]] = other.outputData[MyConstant.outputsName[i]];
             }
         }
 
-        public bool SetValue(string key, float value)
+        public void Set(string key, int value)
         {
-            if (!outputData.ContainsKey(key))
-            {
-                return false;
-            }
-
-            int min = MyConstant.outputRange[key + "_MIN"];
-            int max = MyConstant.outputRange[key + "_MAX"];
-
-            if (value < min)
-            {
-                outputData[key] = min;
-            }
-            else if (value > max)
-            {
-                outputData[key] = max;
-            }
-            else
-            {
-                outputData[key] = (int)value;
-            }
-
-            return true;
+            outputData[key] = value;
         }
 
-        public bool AddValue(string key, float value)
-        {
-            return SetValue(key, outputData[key] + value);
-        }
+        //    public void SetInitOutputData()
+        //    {
+        //        for (int i = 1; i < MyConstant.outputsName.Length; i++)
+        //        {
+        //            outputData[MyConstant.outputsName[i]] = MyConstant.outputsInit[i];
+        //        }
+        //    }
 
-        public bool ToggleValue(string key, float value)
-        {
-            if (!outputData.ContainsKey(key))
-            {
-                return false;
-            }
+        //    public bool SetValue(string key, float value)
+        //    {
+        //        if (!outputData.ContainsKey(key))
+        //        {
+        //            return false;
+        //        }
 
-            if (outputData[key] == 0)
-            {
-                return SetValue(key, value);
-            }
-            else
-            {
-                return SetValue(key, 0);
-            }
-        }
+        //        int min = MyConstant.outputRange[key + "_MIN"];
+        //        int max = MyConstant.outputRange[key + "_MAX"];
 
-        public void SetTime(double time)
-        {
-            outputData["TIME"] = (int)(time * 10) * 100;
-        }
-        public int GetTime()
-        {
-            return outputData["TIME"];
-        }
-        public Dictionary<string, int> GetOutputDictionary()
-        {
-            return outputData;
-        }
+        //        if (value < min)
+        //        {
+        //            outputData[key] = min;
+        //        }
+        //        else if (value > max)
+        //        {
+        //            outputData[key] = max;
+        //        }
+        //        else
+        //        {
+        //            outputData[key] = (int)value;
+        //        }
 
-        public OutputValue GetClone()
-        {
-            OutputValue clone = new OutputValue();
-            clone.outputData = new Dictionary<string, int>(this.outputData);
-            return clone;
-        }
+        //        return true;
+        //    }
+
+        //    public bool AddValue(string key, float value)
+        //    {
+        //        return SetValue(key, outputData[key] + value);
+        //    }
+
+        //    public bool ToggleValue(string key, float value)
+        //    {
+        //        if (!outputData.ContainsKey(key))
+        //        {
+        //            return false;
+        //        }
+
+        //        if (outputData[key] == 0)
+        //        {
+        //            return SetValue(key, value);
+        //        }
+        //        else
+        //        {
+        //            return SetValue(key, 0);
+        //        }
+        //    }
+
+        //    public void SetTime(double time)
+        //    {
+        //        outputData["TIME"] = (int)(time * 10) * 100;
+        //    }
+        //    public int GetTime()
+        //    {
+        //        return outputData["TIME"];
+        //    }
+        //    public Dictionary<string, int> GetOutputDictionary()
+        //    {
+        //        return outputData;
+        //    }
+
+        //    public OutputValue GetClone()
+        //    {
+        //        OutputValue clone = new OutputValue();
+        //        clone.outputData = new Dictionary<string, int>(this.outputData);
+        //        return clone;
+        //    }
     }
 }
