@@ -4,10 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace SimulatorRecorder.Modules
 {
-    static class ProgramModule
+    static class ProcessManager
     {
         static private Process process = null!;
-
         static public void Launch(string[] args)
         {
             try
