@@ -50,7 +50,10 @@
             SPEED = new Label();
             BLOWER1 = new Label();
             didFindController = new Label();
-            button_SelectVideo = new Button();
+            button_selectVideo = new Button();
+            button_startRecord = new Button();
+            button_play = new Button();
+            button_stopRecording = new Button();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -99,10 +102,11 @@
             button_start.BackColor = Color.FromArgb(192, 255, 192);
             button_start.FlatAppearance.BorderColor = Color.White;
             button_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_start.Location = new Point(25, 487);
+            button_start.Location = new Point(25, 452);
             button_start.Name = "button_start";
             button_start.Size = new Size(150, 38);
             button_start.TabIndex = 4;
+            button_start.TabStop = false;
             button_start.Text = "시작";
             button_start.UseVisualStyleBackColor = false;
             button_start.Click += button_start_Click;
@@ -111,10 +115,11 @@
             // 
             button_end.BackColor = Color.FromArgb(192, 255, 192);
             button_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_end.Location = new Point(195, 487);
+            button_end.Location = new Point(195, 452);
             button_end.Name = "button_end";
             button_end.Size = new Size(150, 38);
             button_end.TabIndex = 5;
+            button_end.TabStop = false;
             button_end.Text = "종료";
             button_end.UseVisualStyleBackColor = false;
             button_end.Click += button_end_Click;
@@ -123,7 +128,7 @@
             // 
             label_elapsed.AutoSize = true;
             label_elapsed.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
-            label_elapsed.Location = new Point(115, 404);
+            label_elapsed.Location = new Point(114, 375);
             label_elapsed.Name = "label_elapsed";
             label_elapsed.Size = new Size(135, 30);
             label_elapsed.TabIndex = 6;
@@ -153,7 +158,7 @@
             // menu1_deadzon
             // 
             menu1_deadzon.Name = "menu1_deadzon";
-            menu1_deadzon.Size = new Size(180, 22);
+            menu1_deadzon.Size = new Size(166, 22);
             menu1_deadzon.Text = "데드존 설정";
             menu1_deadzon.Click += menu1_deadzon_Click;
             // 
@@ -161,33 +166,33 @@
             // 
             menu1_manual.ImageScaling = ToolStripItemImageScaling.None;
             menu1_manual.Name = "menu1_manual";
-            menu1_manual.Size = new Size(180, 22);
+            menu1_manual.Size = new Size(166, 22);
             menu1_manual.Text = "사용 설명";
             menu1_manual.Click += menu1_manual_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(163, 6);
             // 
             // menu1_setSavePath
             // 
             menu1_setSavePath.Name = "menu1_setSavePath";
-            menu1_setSavePath.Size = new Size(180, 22);
+            menu1_setSavePath.Size = new Size(166, 22);
             menu1_setSavePath.Text = "저장 폴더 설정";
             menu1_setSavePath.Click += menu1_setSavePath_Click;
             // 
             // menu1_getSavePath
             // 
             menu1_getSavePath.Name = "menu1_getSavePath";
-            menu1_getSavePath.Size = new Size(180, 22);
+            menu1_getSavePath.Size = new Size(166, 22);
             menu1_getSavePath.Text = "저장 폴더 확인";
             menu1_getSavePath.Click += menu1_getSavePath_Click;
             // 
             // menu1_setUnityPath
             // 
             menu1_setUnityPath.Name = "menu1_setUnityPath";
-            menu1_setUnityPath.Size = new Size(180, 22);
+            menu1_setUnityPath.Size = new Size(166, 22);
             menu1_setUnityPath.Text = "유니티 파일 설정";
             menu1_setUnityPath.Click += menu1_setUnityPath_Click;
             // 
@@ -236,33 +241,78 @@
             didFindController.AutoSize = true;
             didFindController.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
             didFindController.ForeColor = Color.Red;
-            didFindController.Location = new Point(44, 364);
+            didFindController.Location = new Point(39, 345);
             didFindController.Name = "didFindController";
             didFindController.Size = new Size(291, 30);
             didFindController.TabIndex = 8;
             didFindController.Text = "컨트롤러를 찾을 수 없습니다.";
             didFindController.Visible = false;
             // 
-            // button_SelectVideo
+            // button_selectVideo
             // 
-            button_SelectVideo.BackColor = Color.FromArgb(192, 255, 192);
-            button_SelectVideo.FlatAppearance.BorderColor = Color.White;
-            button_SelectVideo.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_SelectVideo.Location = new Point(25, 443);
-            button_SelectVideo.Name = "button_SelectVideo";
-            button_SelectVideo.Size = new Size(320, 38);
-            button_SelectVideo.TabIndex = 9;
-            button_SelectVideo.Text = "비디오 선택";
-            button_SelectVideo.UseVisualStyleBackColor = false;
-            button_SelectVideo.Click += button_SelectVideo_Click;
+            button_selectVideo.BackColor = Color.FromArgb(192, 255, 192);
+            button_selectVideo.FlatAppearance.BorderColor = Color.White;
+            button_selectVideo.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_selectVideo.Location = new Point(25, 408);
+            button_selectVideo.Name = "button_selectVideo";
+            button_selectVideo.Size = new Size(320, 38);
+            button_selectVideo.TabIndex = 9;
+            button_selectVideo.TabStop = false;
+            button_selectVideo.Text = "비디오 선택";
+            button_selectVideo.UseVisualStyleBackColor = false;
+            button_selectVideo.Click += button_SelectVideo_Click;
+            // 
+            // button_startRecord
+            // 
+            button_startRecord.BackColor = Color.FromArgb(255, 192, 192);
+            button_startRecord.FlatAppearance.BorderColor = Color.White;
+            button_startRecord.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_startRecord.Location = new Point(25, 496);
+            button_startRecord.Name = "button_startRecord";
+            button_startRecord.Size = new Size(150, 48);
+            button_startRecord.TabIndex = 10;
+            button_startRecord.TabStop = false;
+            button_startRecord.Text = "레코딩";
+            button_startRecord.UseVisualStyleBackColor = false;
+            button_startRecord.Click += button_startRecord_Click;
+            // 
+            // button_play
+            // 
+            button_play.BackColor = Color.FromArgb(192, 192, 255);
+            button_play.FlatAppearance.BorderColor = Color.White;
+            button_play.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_play.Location = new Point(195, 496);
+            button_play.Name = "button_play";
+            button_play.Size = new Size(150, 48);
+            button_play.TabIndex = 10;
+            button_play.TabStop = false;
+            button_play.Text = "플레이";
+            button_play.UseVisualStyleBackColor = false;
+            button_play.Click += button_play_Click;
+            // 
+            // button_stopRecording
+            // 
+            button_stopRecording.BackColor = Color.FromArgb(192, 192, 255);
+            button_stopRecording.FlatAppearance.BorderColor = Color.White;
+            button_stopRecording.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_stopRecording.Location = new Point(195, 496);
+            button_stopRecording.Name = "button_stopRecording";
+            button_stopRecording.Size = new Size(150, 48);
+            button_stopRecording.TabIndex = 11;
+            button_stopRecording.TabStop = false;
+            button_stopRecording.Text = "정지";
+            button_stopRecording.UseVisualStyleBackColor = false;
+            button_stopRecording.Click += button_stopRecording_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(373, 537);
-            Controls.Add(button_SelectVideo);
+            ClientSize = new Size(373, 549);
+            Controls.Add(button_play);
+            Controls.Add(button_startRecord);
+            Controls.Add(button_selectVideo);
             Controls.Add(didFindController);
             Controls.Add(label_elapsed);
             Controls.Add(button_end);
@@ -276,6 +326,7 @@
             Controls.Add(PITCH);
             Controls.Add(ROLL);
             Controls.Add(menuStrip1);
+            Controls.Add(button_stopRecording);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
@@ -309,8 +360,11 @@
         private Label didFindController;
         private ToolStripMenuItem menu1_manual;
         private ToolStripSeparator toolStripSeparator1;
-        private Button button_SelectVideo;
+        private Button button_selectVideo;
         private ToolStripMenuItem menu1_setUnityPath;
         private ToolStripMenuItem menu1_deadzon;
+        private Button button_startRecord;
+        private Button button_play;
+        private Button button_stopRecording;
     }
 }
