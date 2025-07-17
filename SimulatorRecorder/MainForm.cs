@@ -5,8 +5,8 @@ namespace SimulatorRecorder
 {
     public partial class MainForm : Form
     {
-        private ControllerInputModule controllerInputMoudle;
-        bool stateButtonRecording;
+        private ControllerInputModule controllerInputModule;
+        bool stateButtonRecord;
         bool stateButtonPlay;
         public MainForm()
         {
@@ -14,17 +14,9 @@ namespace SimulatorRecorder
             Init();
             FileManager.Init();
             ProgramManager.Initialize(this.timer_main, 100);
-            controllerInputMoudle = new ControllerInputModule();
+            controllerInputModule = new ControllerInputModule();
             HotKeyModule.OnHotKeyPressed += HotKeyAction;
             HotKeyModule.RegisterHotKey(this.Handle);
-        }
-        private void Init()
-        {
-            stateButtonRecording = false;
-            stateButtonPlay = false;
-            button_selectVideo.Enabled = false;
-            button_start.Enabled = false;
-            button_end.Enabled = false;
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -39,12 +31,34 @@ namespace SimulatorRecorder
             HotKeyModule.ProcessHotKeyMessage(ref m);
             base.WndProc(ref m);
         }
+
+        private void Init()
+        {
+
+            button_record_start.Visible = true;
+            button_record_end.Visible = true;
+            button_play.Visible = true;
+            button_record.Visible = true;
+            button_play_selectCSV.Visible = false;
+            button_play_start.Visible = false;
+
+
+
+            button_record_start.Enabled = false;
+            button_record_end.Enabled = false;
+            button_selectVideo.Enabled = false;
+            button_play_stop.Visible = false;
+            button_record_stop.Visible = false;
+
+            stateButtonPlay = false;
+            stateButtonRecord = false;
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
             ProgramManager.DoSemiStart();
-            controllerInputMoudle = new ControllerInputModule();
+            controllerInputModule = new ControllerInputModule();
         }
-        private void button_start_Click(object sender, EventArgs e)
+        private void button_record_start_Click(object sender, EventArgs e)
         {
             if (FileManager.errorOccurred)
             {
@@ -60,10 +74,10 @@ namespace SimulatorRecorder
             }
             HotKeyModule.SendHotKeySignal();
             ProgramManager.DoStart();
-            controllerInputMoudle = new ControllerInputModule();
+            controllerInputModule = new ControllerInputModule();
         }
 
-        private void button_end_Click(object sender, EventArgs e)
+        private void button_record_end_Click(object sender, EventArgs e)
         {
             bool shouldWrite = false;
             if (FileManager.errorOccurred || ProgramManager.IsRunTimer)
@@ -75,7 +89,7 @@ namespace SimulatorRecorder
 
             if (shouldWrite)
             {
-                if (FileManager.WriteFile(controllerInputMoudle.GetBuffer()))
+                if (FileManager.WriteFile(controllerInputModule.GetBuffer()))
                 {
                     Console.WriteLine("End");
                     ProgramManager.DoSemiStart();
@@ -85,7 +99,7 @@ namespace SimulatorRecorder
 
         private void TimerEvent(object sender, EventArgs e)
         {
-            if (!controllerInputMoudle.IsConnected())
+            if (!controllerInputModule.IsConnected())
             {
                 didFindController.Visible = true;
                 return;
@@ -95,35 +109,46 @@ namespace SimulatorRecorder
                 didFindController.Visible = false;
             }
 
-            controllerInputMoudle.Run();
-            if (controllerInputMoudle.IsPressDownStartKey())
+            if (stateButtonRecord)
             {
-                TimerManage();
+                controllerInputModule.Run();
+                if (controllerInputModule.IsPressDownStartKey())
+                {
+                    TimerManage();
+                }
+                TimerEventText();
             }
-            TimerEventText();
+            else if (stateButtonPlay)
+            {
+                if (controllerInputModule.Playback())
+                {
+                    button_play_stop.PerformClick();
+                }
+
+            }
         }
         private void TimerEventText()
         {
             label_elapsed.Text = "진행 시간 : " + ProgramManager.GetElapsedTime().ToString("F1");
-            ROLL.Text = "ROLL    : " + controllerInputMoudle.GetOutput("ROLL");
-            PITCH.Text = "PITCH   : " + controllerInputMoudle.GetOutput("PITCH");
-            YAW.Text = "YAW     : " + controllerInputMoudle.GetOutput("YAW");
-            SWAY.Text = "SWAY    : " + controllerInputMoudle.GetOutput("SWAY");
-            SURGE.Text = "SURGE   : " + controllerInputMoudle.GetOutput("SURGE");
-            HEAVE.Text = "HEAVE   : " + controllerInputMoudle.GetOutput("HEAVE");
-            SPEED.Text = "SPEED   : " + controllerInputMoudle.GetOutput("SPEED");
-            BLOWER1.Text = "BLOWER1 : " + controllerInputMoudle.GetOutput("BLOWER1");
+            ROLL.Text = "ROLL    : " + controllerInputModule.GetOutput("ROLL");
+            PITCH.Text = "PITCH   : " + controllerInputModule.GetOutput("PITCH");
+            YAW.Text = "YAW     : " + controllerInputModule.GetOutput("YAW");
+            SWAY.Text = "SWAY    : " + controllerInputModule.GetOutput("SWAY");
+            SURGE.Text = "SURGE   : " + controllerInputModule.GetOutput("SURGE");
+            HEAVE.Text = "HEAVE   : " + controllerInputModule.GetOutput("HEAVE");
+            SPEED.Text = "SPEED   : " + controllerInputModule.GetOutput("SPEED");
+            BLOWER1.Text = "BLOWER1 : " + controllerInputModule.GetOutput("BLOWER1");
         }
 
         private void TimerManage()
         {
             if (!ProgramManager.IsRunTimer)
             {
-                button_start.PerformClick();
+                button_record_start.PerformClick();
             }
             else
             {
-                button_end.PerformClick();
+                button_record_end.PerformClick();
             }
         }
 
@@ -155,7 +180,7 @@ namespace SimulatorRecorder
             MessageBoxHelper.TextBox(500, 400, "사용 설명", str);
         }
 
-        private void button_SelectVideo_Click(object sender, EventArgs e)
+        private void button_selectVideo_Click(object sender, EventArgs e)
         {
             string?[] path = FileManager.SetFilePath("동영상 파일 선택");
             if (path != null)
@@ -164,29 +189,31 @@ namespace SimulatorRecorder
             }
         }
 
-        private void toolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void menu1_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void button_startRecord_Click(object sender, EventArgs e)
+        private void button_record_Click(object sender, EventArgs e)
         {
-            if (stateButtonRecording)
+            if (stateButtonRecord || stateButtonPlay)
             {
                 return;
             }
+            Init();
+
+            stateButtonPlay = false;
+            stateButtonRecord = true;
+
             button_selectVideo.Enabled = true;
-            button_start.Enabled = true;
-            button_end.Enabled = true;
+
+            button_record.Visible = false;
+            button_record_start.Enabled = true;
+            button_record_end.Enabled = true;
+            button_record_stop.Visible = true;
+            ProgramManager.Initialize(100);
             ProgramManager.DoSemiStart();
-            ProgramManager.DoStartMOBC();
-            button_stopRecording.Visible = true;
-            button_play.Visible = false;
+
         }
 
         private void button_play_Click(object sender, EventArgs e)
@@ -195,21 +222,68 @@ namespace SimulatorRecorder
             {
                 return;
             }
-
-            button_selectVideo.Enabled = false;
-            button_start.Enabled = false;
-            button_end.Enabled = false;
-            controllerInputMoudle = new ControllerInputModule();
             TimerEventText();
             ProgramManager.DoEnd();
-            FileManager.readCSV("CSV파일을 선택해주세요.");
+            button_record_stop.PerformClick();
+
+            stateButtonRecord = false;
+
+            button_selectVideo.Enabled = true;
+
+            button_record_start.Visible = false;
+            button_record_end.Visible = false;
+
+            button_play_selectCSV.Visible = true;
+            button_play_start.Visible = true;
+            button_play_start.Enabled = false;
+            button_play_stop.Visible = true;
+
+            ProgramManager.Initialize(50);
+
+        }
+        private void button_record_stop_Click(object sender, EventArgs e)
+        {
+            Init();
+            stateButtonRecord = false;
+            ProgramManager.DoEnd();
         }
 
-        private void button_stopRecording_Click(object sender, EventArgs e)
+        private void button_play_stop_Click(object sender, EventArgs e)
         {
+            button_play_stop.Visible = false;
+            button_play_start.Visible = true;
+            button_play_start.Enabled = true;
+            controllerInputModule.PlayReset();
+            stateButtonPlay = false;
             ProgramManager.DoEnd();
-            button_stopRecording.Visible = false;
-            button_play.Visible = true;
+            HotKeyModule.SendHotKeySignal();
+        }
+
+        private void button_play_selecetCSV_Click(object sender, EventArgs e)
+        {
+            List<OutputValue> list = FileManager.readCSV("CSV파일을 선택해주세요.");
+
+
+            if(list.Count != 0)
+            {
+                controllerInputModule = new ControllerInputModule();
+                controllerInputModule.InitPlayBack(list);
+            }
+            if(controllerInputModule.IsPlayReady)
+            {
+                button_play_start.Enabled = true;
+            }
+
+        }
+
+
+        private void button_play_start_Click(object sender, EventArgs e)
+        {
+            button_play_start.Visible = false;
+            button_play_stop.Visible = true;
+            stateButtonPlay = true;
+            HotKeyModule.SendHotKeySignal();
+            ProgramManager.DoStart();
         }
     }
 }

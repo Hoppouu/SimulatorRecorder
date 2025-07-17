@@ -33,8 +33,8 @@
             PITCH = new Label();
             SWAY = new Label();
             YAW = new Label();
-            button_start = new Button();
-            button_end = new Button();
+            button_record_start = new Button();
+            button_record_end = new Button();
             label_elapsed = new Label();
             timer_main = new System.Windows.Forms.Timer(components);
             menuStrip1 = new MenuStrip();
@@ -51,9 +51,12 @@
             BLOWER1 = new Label();
             didFindController = new Label();
             button_selectVideo = new Button();
-            button_startRecord = new Button();
+            button_record = new Button();
             button_play = new Button();
-            button_stopRecording = new Button();
+            button_record_stop = new Button();
+            button_play_stop = new Button();
+            button_play_selectCSV = new Button();
+            button_play_start = new Button();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -97,32 +100,34 @@
             YAW.TabIndex = 2;
             YAW.Text = "YAW     : 0";
             // 
-            // button_start
+            // button_record_start
             // 
-            button_start.BackColor = Color.FromArgb(192, 255, 192);
-            button_start.FlatAppearance.BorderColor = Color.White;
-            button_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_start.Location = new Point(25, 452);
-            button_start.Name = "button_start";
-            button_start.Size = new Size(150, 38);
-            button_start.TabIndex = 4;
-            button_start.TabStop = false;
-            button_start.Text = "시작";
-            button_start.UseVisualStyleBackColor = false;
-            button_start.Click += button_start_Click;
+            button_record_start.BackColor = Color.FromArgb(192, 255, 192);
+            button_record_start.Enabled = false;
+            button_record_start.FlatAppearance.BorderColor = Color.White;
+            button_record_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_record_start.Location = new Point(25, 450);
+            button_record_start.Name = "button_record_start";
+            button_record_start.Size = new Size(150, 38);
+            button_record_start.TabIndex = 4;
+            button_record_start.TabStop = false;
+            button_record_start.Text = "시작";
+            button_record_start.UseVisualStyleBackColor = false;
+            button_record_start.Click += button_record_start_Click;
             // 
-            // button_end
+            // button_record_end
             // 
-            button_end.BackColor = Color.FromArgb(192, 255, 192);
-            button_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_end.Location = new Point(195, 452);
-            button_end.Name = "button_end";
-            button_end.Size = new Size(150, 38);
-            button_end.TabIndex = 5;
-            button_end.TabStop = false;
-            button_end.Text = "종료";
-            button_end.UseVisualStyleBackColor = false;
-            button_end.Click += button_end_Click;
+            button_record_end.BackColor = Color.FromArgb(192, 255, 192);
+            button_record_end.Enabled = false;
+            button_record_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_record_end.Location = new Point(195, 452);
+            button_record_end.Name = "button_record_end";
+            button_record_end.Size = new Size(150, 38);
+            button_record_end.TabIndex = 5;
+            button_record_end.TabStop = false;
+            button_record_end.Text = "종료";
+            button_record_end.UseVisualStyleBackColor = false;
+            button_record_end.Click += button_record_end_Click;
             // 
             // label_elapsed
             // 
@@ -251,6 +256,7 @@
             // button_selectVideo
             // 
             button_selectVideo.BackColor = Color.FromArgb(192, 255, 192);
+            button_selectVideo.Enabled = false;
             button_selectVideo.FlatAppearance.BorderColor = Color.White;
             button_selectVideo.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
             button_selectVideo.Location = new Point(25, 408);
@@ -260,21 +266,21 @@
             button_selectVideo.TabStop = false;
             button_selectVideo.Text = "비디오 선택";
             button_selectVideo.UseVisualStyleBackColor = false;
-            button_selectVideo.Click += button_SelectVideo_Click;
+            button_selectVideo.Click += button_selectVideo_Click;
             // 
-            // button_startRecord
+            // button_record
             // 
-            button_startRecord.BackColor = Color.FromArgb(255, 192, 192);
-            button_startRecord.FlatAppearance.BorderColor = Color.White;
-            button_startRecord.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_startRecord.Location = new Point(25, 496);
-            button_startRecord.Name = "button_startRecord";
-            button_startRecord.Size = new Size(150, 48);
-            button_startRecord.TabIndex = 10;
-            button_startRecord.TabStop = false;
-            button_startRecord.Text = "레코딩";
-            button_startRecord.UseVisualStyleBackColor = false;
-            button_startRecord.Click += button_startRecord_Click;
+            button_record.BackColor = Color.FromArgb(255, 192, 192);
+            button_record.FlatAppearance.BorderColor = Color.White;
+            button_record.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_record.Location = new Point(25, 496);
+            button_record.Name = "button_record";
+            button_record.Size = new Size(150, 48);
+            button_record.TabIndex = 10;
+            button_record.TabStop = false;
+            button_record.Text = "레코딩";
+            button_record.UseVisualStyleBackColor = false;
+            button_record.Click += button_record_Click;
             // 
             // button_play
             // 
@@ -290,19 +296,64 @@
             button_play.UseVisualStyleBackColor = false;
             button_play.Click += button_play_Click;
             // 
-            // button_stopRecording
+            // button_record_stop
             // 
-            button_stopRecording.BackColor = Color.FromArgb(192, 192, 255);
-            button_stopRecording.FlatAppearance.BorderColor = Color.White;
-            button_stopRecording.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_stopRecording.Location = new Point(195, 496);
-            button_stopRecording.Name = "button_stopRecording";
-            button_stopRecording.Size = new Size(150, 48);
-            button_stopRecording.TabIndex = 11;
-            button_stopRecording.TabStop = false;
-            button_stopRecording.Text = "정지";
-            button_stopRecording.UseVisualStyleBackColor = false;
-            button_stopRecording.Click += button_stopRecording_Click;
+            button_record_stop.BackColor = Color.FromArgb(255, 192, 192);
+            button_record_stop.FlatAppearance.BorderColor = Color.White;
+            button_record_stop.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_record_stop.Location = new Point(25, 496);
+            button_record_stop.Name = "button_record_stop";
+            button_record_stop.Size = new Size(150, 48);
+            button_record_stop.TabIndex = 11;
+            button_record_stop.TabStop = false;
+            button_record_stop.Text = "정지";
+            button_record_stop.UseVisualStyleBackColor = false;
+            button_record_stop.Visible = false;
+            button_record_stop.Click += button_record_stop_Click;
+            // 
+            // button_play_stop
+            // 
+            button_play_stop.BackColor = Color.FromArgb(192, 255, 192);
+            button_play_stop.FlatAppearance.BorderColor = Color.White;
+            button_play_stop.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_play_stop.Location = new Point(195, 452);
+            button_play_stop.Name = "button_play_stop";
+            button_play_stop.Size = new Size(150, 36);
+            button_play_stop.TabIndex = 12;
+            button_play_stop.TabStop = false;
+            button_play_stop.Text = "정지";
+            button_play_stop.UseVisualStyleBackColor = false;
+            button_play_stop.Visible = false;
+            button_play_stop.Click += button_play_stop_Click;
+            // 
+            // button_play_selectCSV
+            // 
+            button_play_selectCSV.BackColor = Color.FromArgb(192, 255, 192);
+            button_play_selectCSV.FlatAppearance.BorderColor = Color.White;
+            button_play_selectCSV.Font = new Font("맑은 고딕", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_play_selectCSV.Location = new Point(25, 452);
+            button_play_selectCSV.Name = "button_play_selectCSV";
+            button_play_selectCSV.Size = new Size(150, 38);
+            button_play_selectCSV.TabIndex = 13;
+            button_play_selectCSV.TabStop = false;
+            button_play_selectCSV.Text = "CSV 파일 선택";
+            button_play_selectCSV.UseVisualStyleBackColor = false;
+            button_play_selectCSV.Visible = false;
+            button_play_selectCSV.Click += button_play_selecetCSV_Click;
+            // 
+            // button_play_start
+            // 
+            button_play_start.BackColor = Color.FromArgb(192, 255, 192);
+            button_play_start.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
+            button_play_start.Location = new Point(195, 452);
+            button_play_start.Name = "button_play_start";
+            button_play_start.Size = new Size(150, 38);
+            button_play_start.TabIndex = 14;
+            button_play_start.TabStop = false;
+            button_play_start.Text = "시작";
+            button_play_start.UseVisualStyleBackColor = false;
+            button_play_start.Visible = false;
+            button_play_start.Click += button_play_start_Click;
             // 
             // MainForm
             // 
@@ -311,12 +362,12 @@
             BackColor = Color.White;
             ClientSize = new Size(373, 549);
             Controls.Add(button_play);
-            Controls.Add(button_startRecord);
+            Controls.Add(button_record);
             Controls.Add(button_selectVideo);
             Controls.Add(didFindController);
             Controls.Add(label_elapsed);
-            Controls.Add(button_end);
-            Controls.Add(button_start);
+            Controls.Add(button_record_end);
+            Controls.Add(button_record_start);
             Controls.Add(BLOWER1);
             Controls.Add(SPEED);
             Controls.Add(SWAY);
@@ -326,7 +377,10 @@
             Controls.Add(PITCH);
             Controls.Add(ROLL);
             Controls.Add(menuStrip1);
-            Controls.Add(button_stopRecording);
+            Controls.Add(button_record_stop);
+            Controls.Add(button_play_stop);
+            Controls.Add(button_play_start);
+            Controls.Add(button_play_selectCSV);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
@@ -345,8 +399,8 @@
         private Label PITCH;
         private Label SWAY;
         private Label YAW;
-        private Button button_start;
-        private Button button_end;
+        private Button button_record_start;
+        private Button button_record_end;
         private Label label_elapsed;
         private System.Windows.Forms.Timer timer_main;
         private MenuStrip menuStrip1;
@@ -363,8 +417,11 @@
         private Button button_selectVideo;
         private ToolStripMenuItem menu1_setUnityPath;
         private ToolStripMenuItem menu1_deadzon;
-        private Button button_startRecord;
+        private Button button_record;
         private Button button_play;
-        private Button button_stopRecording;
+        private Button button_record_stop;
+        private Button button_play_stop;
+        private Button button_play_selectCSV;
+        private Button button_play_start;
     }
 }

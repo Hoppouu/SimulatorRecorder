@@ -1,4 +1,5 @@
 ﻿using SimulatorRecorder.Modules;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
@@ -95,7 +96,7 @@ namespace SimulatorRecorder.Modules
 
                     for (int i = 0; i < outputs.Count; i++)
                     {
-                        Dictionary<string, int> outputData = outputs[i].GetOutputDictionary();
+                        ReadOnlyDictionary<string, int> outputData = outputs[i].OutputData;
                         List<string> row = new List<string>();
                         for (int j = 0; j < outputData.Count; j++)
                         {
@@ -125,7 +126,6 @@ namespace SimulatorRecorder.Modules
                 return false;
             }
         }
-
 
         public static bool SetUnityFilePath(string title)
         {
@@ -235,6 +235,20 @@ namespace SimulatorRecorder.Modules
             }
 
             return dict;
+        }
+
+        public static List<OutputValue> readCSV(string title)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = title;
+            openFileDialog.Filter = "CSV File|*.csv*";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return new List<OutputValue>();
+            }
+            string fullPath = openFileDialog.FileName;
+
+            return CSVReader.Read(fullPath);
         }
     }
 }

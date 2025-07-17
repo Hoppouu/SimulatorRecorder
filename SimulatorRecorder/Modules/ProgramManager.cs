@@ -20,21 +20,37 @@ namespace SimulatorRecorder.Modules
                 ProgramManager.timer.Interval = interval;
             }
         }
+
+        public static void Initialize(int interval)
+        {
+            if (ProgramManager.timer != null)
+            {
+                ProgramManager.timer.Interval = interval;
+            }
+        }
         public static void DoSemiStart()
         {
             IsRunTimer = false;
+            IsRunMOBC = true;
             timer.Enabled = true;
         }
 
         public static void DoSemiEnd()
         {
             timer.Enabled = false;
+            IsRunMOBC = false;
         }
 
         public static void DoStart()
         {
             timer.Enabled = true;
             IsRunTimer = true;
+            IsRunMOBC = true;
+            startTime = DateTime.Now;
+        }
+
+        public static void ResetTimer()
+        {
             startTime = DateTime.Now;
         }
 
@@ -42,14 +58,6 @@ namespace SimulatorRecorder.Modules
         {
             timer.Enabled = false;
             IsRunTimer = false;
-        }
-
-        public static void DoStartMOBC()
-        {
-            IsRunMOBC = true;
-        }
-        public static void EndStartMOBC()
-        {
             IsRunMOBC = false;
         }
 

@@ -108,7 +108,7 @@ namespace SimulatorRecorder.Modules
 
             outputsInit = new int[]
             {
-                -1,     // TIME
+                0,     // TIME
                 10000,  // ROLL
                 10000,  // PITCH
                 10000,  // YAW

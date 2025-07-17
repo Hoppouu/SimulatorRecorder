@@ -1,22 +1,28 @@
 ﻿using Silk.NET.XInput;
 namespace SimulatorRecorder.Modules
 {
-    internal class ControllerInputModule
+    public partial class ControllerInputModule
     {
         private OutputModule outputModule;
+        private SimulatorController simulatorController;
         private List<OutputValue> buffer;
         private List<GamepadInput> bufferGameInput;
+        PlaybackModule playbackModule;
         private XInput xinput;
         private State state;
         private int curIndex;
+
+        public bool IsPlayReady { get; private set; } = false;
         public ControllerInputModule()
         {
             outputModule = new OutputModule();
+            simulatorController = new SimulatorController();
+            playbackModule = new PlaybackModule();
             buffer = new List<OutputValue>();
             bufferGameInput = new List<GamepadInput>();
             xinput = XInput.GetApi();
             state = new State();
-            curIndex = -1;
+            curIndex = -1; 
         }
 
         public bool IsConnected()
@@ -48,7 +54,6 @@ namespace SimulatorRecorder.Modules
                 return null;
             }
         }
-
         private float NormStick(int value)
         {
             if (value < 0)
@@ -66,7 +71,7 @@ namespace SimulatorRecorder.Modules
             return value / 255f;
         }
 
-        private float IsPressDown(int i, GamepadInputValue input)
+        private float SetPressDown(int i, GamepadInputValue input)
         {
             if(GetPreState() == null)
             {
@@ -93,7 +98,7 @@ namespace SimulatorRecorder.Modules
             return 0f;
         }
 
-        public void GetButton()
+        public void Run()
         {
             if (GetCurState() == null)
             {
@@ -102,7 +107,7 @@ namespace SimulatorRecorder.Modules
             List<GamepadInputValue> temp = new List<GamepadInputValue>();
             GamepadInput curState = new GamepadInput();
             ushort wButtons = state.Gamepad.WButtons;
-            double time = TimerModule.GetElapsedTime();
+            double time = ProgramManager.GetElapsedTime();
             for (int i = 0; i < MyConstant.buttonsKey.Length; i++)
             {
                 XInputButtons button = MyConstant.buttonsKey[i];
@@ -112,11 +117,11 @@ namespace SimulatorRecorder.Modules
                     MyConstant.buttonsName[i],
                     isPressed ? 1.0f : 0.0f
                 );
-
-                if (IsPressDown(i, input) != 0)
-                {
-                    Console.WriteLine($"{button} 버튼 눌림");
-                }
+                SetPressDown(i, input);
+                //if (SetPressDown(i, input) != 0)
+                //{
+                //    Console.WriteLine($"{button} 버튼 눌림");
+                //}
                 temp.Add(input);
             }
 
@@ -124,23 +129,25 @@ namespace SimulatorRecorder.Modules
             {
                 temp.Add(new GamepadInputValue(name, value));
             }
-            AddAnalog("LStickX", NormStick(state.Gamepad.SThumbLX));
-            AddAnalog("LStickY", NormStick(state.Gamepad.SThumbLY));
-            AddAnalog("RStickX", NormStick(state.Gamepad.SThumbRX));
-            AddAnalog("RStickY", NormStick(state.Gamepad.SThumbRY));
-            AddAnalog("LTrigger", NormTrigger(state.Gamepad.BLeftTrigger));
-            AddAnalog("RTrigger", NormTrigger(state.Gamepad.BRightTrigger));
+            AddAnalog(MyConstant.LStickX, NormStick(state.Gamepad.SThumbLX));
+            AddAnalog(MyConstant.LStickY, NormStick(state.Gamepad.SThumbLY));
+            AddAnalog(MyConstant.RStickX, NormStick(state.Gamepad.SThumbRX));
+            AddAnalog(MyConstant.RStickY, NormStick(state.Gamepad.SThumbRY));
+            AddAnalog(MyConstant.LTrigger, NormTrigger(state.Gamepad.BLeftTrigger));
+            AddAnalog(MyConstant.RTrigger, NormTrigger(state.Gamepad.BRightTrigger));
             curState.Set(time, temp);
-            if (curState.values[16].buttonValue > 0)
-            {
-                Console.WriteLine($"LTrigger 버튼 눌림 {curState.values[16].buttonValue}");
-            }
-            if (curState.values[17].buttonValue > 0)
-            {
-                Console.WriteLine($"RTrigger 버튼 눌림 {curState.values[17].buttonValue}");
-            }
+            //if (curState.values[16].buttonValue > 0)
+            //{
+            //    Console.WriteLine($"{MyConstant.LTrigger} 버튼 눌림 {curState.values[16].buttonValue}");
+            //}
+            //if (curState.values[17].buttonValue > 0)
+            //{
+            //    Console.WriteLine($"{MyConstant.RTrigger} 버튼 눌림 {curState.values[17].buttonValue}");
+            //}
 
-            outputModule.SetOutput(curState.time, curState.values);
+            outputModule.SetOutputValue(curState.time, curState.values);
+            simulatorController.Call_VROA_MOBC_action(outputModule.GetOutputValue());
+
             ++curIndex;
             buffer.Add(outputModule.GetOutputValue());
             bufferGameInput.Add(curState);
@@ -161,17 +168,41 @@ namespace SimulatorRecorder.Modules
 
         public string GetOutput(string key)
         {
-            return outputModule.GetOutput(key).ToString();
+            return outputModule.GetValue(key).ToString();
         }
 
-        public double GetOutputTime()
-        {
-            return outputModule.GetOutputTime();
-        }
-
-        public bool IsStartTimer()
+        public bool IsPressDownStartKey()
         {
             return GetPreState().values[10].buttonPressDown;
+        }
+
+        public void InitPlayBack(List<OutputValue> record)
+        {
+            Console.WriteLine(record.Count);
+            if(record.Count == 0)
+            {
+                IsPlayReady = false;
+                return;
+            }
+
+            playbackModule.SetRecord(record);
+            IsPlayReady = true;
+        }
+        public bool Playback()
+        {
+            if(playbackModule.IsEnd)
+            {
+                //IsPlayReady = false;
+                PlayReset();
+            }
+            simulatorController.Call_VROA_MOBC_action(playbackModule.Next());
+
+            return playbackModule.IsEnd;
+        }
+
+        public void PlayReset()
+        {
+            playbackModule.Reset();
         }
     }
 }

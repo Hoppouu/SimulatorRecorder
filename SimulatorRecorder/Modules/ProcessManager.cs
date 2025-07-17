@@ -47,7 +47,6 @@ namespace SimulatorRecorder.Modules
                 // 프로세스가 연결되어 있지 않음
                 return;
             }
-
             if (!hasExited)
             {
                 process.CloseMainWindow();
