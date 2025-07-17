@@ -7,15 +7,48 @@ namespace SimulatorRecorder.Modules
     public class PlaybackModule
     {
         private List<OutputValue> record;
+        private SimulatorController simulatorController;
 
         private readonly OutputValue InitOutput = new OutputValue();
         private int idx;
+
+        public bool IsPlayReady { get; private set; } = false;
         public bool IsEnd { get; private set; }
         public PlaybackModule()
         {
             record = new List<OutputValue>();
+            simulatorController = new SimulatorController();
             IsEnd = false;
             idx = 1;
+        }
+
+        public void InitPlayBack(List<OutputValue> record)
+        {
+            Console.WriteLine(record.Count);
+            if (record.Count == 0)
+            {
+                IsPlayReady = false;
+                return;
+            }
+
+            SetRecord(record);
+            IsPlayReady = true;
+        }
+        public bool Playback()
+        {
+            if (IsEnd)
+            {
+                //IsPlayReady = false;
+                PlayReset();
+            }
+            simulatorController.Call_VROA_MOBC_action(Next());
+
+            return IsEnd;
+        }
+
+        public void PlayReset()
+        {
+            Reset();
         }
 
         public void SetRecord(List<OutputValue> list)

@@ -6,6 +6,7 @@ namespace SimulatorRecorder
     public partial class MainForm : Form
     {
         private ControllerInputModule controllerInputModule;
+        private PlaybackModule playbackModule;
         bool stateButtonRecord;
         bool stateButtonPlay;
         public MainForm()
@@ -15,6 +16,7 @@ namespace SimulatorRecorder
             FileManager.Init();
             ProgramManager.Initialize(this.timer_main, 100);
             controllerInputModule = new ControllerInputModule();
+            playbackModule = new PlaybackModule();
             HotKeyModule.OnHotKeyPressed += HotKeyAction;
             HotKeyModule.RegisterHotKey(this.Handle);
         }
@@ -120,7 +122,7 @@ namespace SimulatorRecorder
             }
             else if (stateButtonPlay)
             {
-                if (controllerInputModule.Playback())
+                if (playbackModule.Playback())
                 {
                     button_play_stop.PerformClick();
                 }
@@ -253,7 +255,7 @@ namespace SimulatorRecorder
             button_play_stop.Visible = false;
             button_play_start.Visible = true;
             button_play_start.Enabled = true;
-            controllerInputModule.PlayReset();
+            playbackModule.PlayReset();
             stateButtonPlay = false;
             ProgramManager.DoEnd();
             HotKeyModule.SendHotKeySignal();
@@ -266,10 +268,10 @@ namespace SimulatorRecorder
 
             if(list.Count != 0)
             {
-                controllerInputModule = new ControllerInputModule();
-                controllerInputModule.InitPlayBack(list);
+                playbackModule = new PlaybackModule();
+                playbackModule.InitPlayBack(list);
             }
-            if(controllerInputModule.IsPlayReady)
+            if(playbackModule.IsPlayReady)
             {
                 button_play_start.Enabled = true;
             }

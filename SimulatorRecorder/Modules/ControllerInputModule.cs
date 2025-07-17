@@ -7,17 +7,14 @@ namespace SimulatorRecorder.Modules
         private SimulatorController simulatorController;
         private List<OutputValue> buffer;
         private List<GamepadInput> bufferGameInput;
-        PlaybackModule playbackModule;
         private XInput xinput;
         private State state;
         private int curIndex;
 
-        public bool IsPlayReady { get; private set; } = false;
         public ControllerInputModule()
         {
             outputModule = new OutputModule();
             simulatorController = new SimulatorController();
-            playbackModule = new PlaybackModule();
             buffer = new List<OutputValue>();
             bufferGameInput = new List<GamepadInput>();
             xinput = XInput.GetApi();
@@ -176,33 +173,33 @@ namespace SimulatorRecorder.Modules
             return GetPreState().values[10].buttonPressDown;
         }
 
-        public void InitPlayBack(List<OutputValue> record)
-        {
-            Console.WriteLine(record.Count);
-            if(record.Count == 0)
-            {
-                IsPlayReady = false;
-                return;
-            }
+        //public void InitPlayBack(List<OutputValue> record)
+        //{
+        //    Console.WriteLine(record.Count);
+        //    if(record.Count == 0)
+        //    {
+        //        IsPlayReady = false;
+        //        return;
+        //    }
 
-            playbackModule.SetRecord(record);
-            IsPlayReady = true;
-        }
-        public bool Playback()
-        {
-            if(playbackModule.IsEnd)
-            {
-                //IsPlayReady = false;
-                PlayReset();
-            }
-            simulatorController.Call_VROA_MOBC_action(playbackModule.Next());
+        //    playbackModule.SetRecord(record);
+        //    IsPlayReady = true;
+        //}
+        //public bool Playback()
+        //{
+        //    if(playbackModule.IsEnd)
+        //    {
+        //        //IsPlayReady = false;
+        //        PlayReset();
+        //    }
+        //    simulatorController.Call_VROA_MOBC_action(playbackModule.Next());
 
-            return playbackModule.IsEnd;
-        }
+        //    return playbackModule.IsEnd;
+        //}
 
-        public void PlayReset()
-        {
-            playbackModule.Reset();
-        }
+        //public void PlayReset()
+        //{
+        //    playbackModule.Reset();
+        //}
     }
 }
