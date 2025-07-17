@@ -172,34 +172,5 @@ namespace SimulatorRecorder.Modules
         {
             return GetPreState().values[10].buttonPressDown;
         }
-
-        //public void InitPlayBack(List<OutputValue> record)
-        //{
-        //    Console.WriteLine(record.Count);
-        //    if(record.Count == 0)
-        //    {
-        //        IsPlayReady = false;
-        //        return;
-        //    }
-
-        //    playbackModule.SetRecord(record);
-        //    IsPlayReady = true;
-        //}
-        //public bool Playback()
-        //{
-        //    if(playbackModule.IsEnd)
-        //    {
-        //        //IsPlayReady = false;
-        //        PlayReset();
-        //    }
-        //    simulatorController.Call_VROA_MOBC_action(playbackModule.Next());
-
-        //    return playbackModule.IsEnd;
-        //}
-
-        //public void PlayReset()
-        //{
-        //    playbackModule.Reset();
-        //}
     }
 }

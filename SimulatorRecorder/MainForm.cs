@@ -132,14 +132,14 @@ namespace SimulatorRecorder
         private void TimerEventText()
         {
             label_elapsed.Text = "진행 시간 : " + ProgramManager.GetElapsedTime().ToString("F1");
-            ROLL.Text = "ROLL    : " + controllerInputModule.GetOutput("ROLL");
-            PITCH.Text = "PITCH   : " + controllerInputModule.GetOutput("PITCH");
-            YAW.Text = "YAW     : " + controllerInputModule.GetOutput("YAW");
-            SWAY.Text = "SWAY    : " + controllerInputModule.GetOutput("SWAY");
-            SURGE.Text = "SURGE   : " + controllerInputModule.GetOutput("SURGE");
-            HEAVE.Text = "HEAVE   : " + controllerInputModule.GetOutput("HEAVE");
-            SPEED.Text = "SPEED   : " + controllerInputModule.GetOutput("SPEED");
-            BLOWER1.Text = "BLOWER1 : " + controllerInputModule.GetOutput("BLOWER1");
+            ROLL.Text = $"{MyConstant.ROLL}    : "      + controllerInputModule.GetOutput(MyConstant.ROLL);
+            PITCH.Text = $"{MyConstant.PITCH}   : "     + controllerInputModule.GetOutput(MyConstant.PITCH);
+            YAW.Text = $"{MyConstant.YAW}     : "       + controllerInputModule.GetOutput(MyConstant.YAW);
+            SWAY.Text = $"{MyConstant.SWAY}    : "      + controllerInputModule.GetOutput(MyConstant.SWAY);
+            SURGE.Text = $"{MyConstant.SURGE}   : "     + controllerInputModule.GetOutput(MyConstant.SURGE);
+            HEAVE.Text = $"{MyConstant.HEAVE}   : "     + controllerInputModule.GetOutput(MyConstant.HEAVE);
+            SPEED.Text = $"{MyConstant.SPEED}   : "     + controllerInputModule.GetOutput(MyConstant.SPEED);
+            BLOWER1.Text = $"{MyConstant.BLOWER1} : "   + controllerInputModule.GetOutput(MyConstant.BLOWER1);
         }
 
         private void TimerManage()
@@ -263,7 +263,7 @@ namespace SimulatorRecorder
 
         private void button_play_selecetCSV_Click(object sender, EventArgs e)
         {
-            List<OutputValue> list = FileManager.readCSV("CSV파일을 선택해주세요.");
+            List<OutputValue> list = FileManager.ReadCSV("CSV파일을 선택해주세요.");
 
 
             if(list.Count != 0)

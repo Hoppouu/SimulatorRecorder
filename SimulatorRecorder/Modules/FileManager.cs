@@ -27,7 +27,7 @@ namespace SimulatorRecorder.Modules
 
         private static void SetSetting(string key, string value)
         {
-            if(settings.ContainsKey(key))
+            if (settings.ContainsKey(key))
             {
                 settings[key] = value;
             }
@@ -36,26 +36,26 @@ namespace SimulatorRecorder.Modules
         private static void LoadEnvFile()
         {
             EnsureEnvFile();
-            if (settings.ContainsKey("folderPath"))
+            if (settings.ContainsKey(MyConstant.FolderPath))
             {
-                if (settings["folderPath"] == MyConstant.basePath)
+                if (settings[MyConstant.FolderPath] == MyConstant.basePath)
                 {
-                    folderPath = Path.Combine(MyConstant.basePath, "outputs");
+                    folderPath = Path.Combine(MyConstant.basePath, MyConstant.Outputs);
                 }
                 else
                 {
-                    folderPath = settings["folderPath"];
+                    folderPath = settings[MyConstant.FolderPath];
                 }
             }
 
-            if (settings.ContainsKey("windowsPlayerPath"))
+            if (settings.ContainsKey(MyConstant.WindowsPlayerPath))
             {
-                MyConstant.SetwindowsPlayerPath(settings["windowsPlayerPath"]);
+                MyConstant.SetwindowsPlayerPath(settings[MyConstant.WindowsPlayerPath]);
             }
 
-            if (settings.ContainsKey("deadZone"))
+            if (settings.ContainsKey(MyConstant.DeadZone))
             {
-                if (float.TryParse(settings["deadZone"], out float value))
+                if (float.TryParse(settings[MyConstant.DeadZone], out float value))
                 {
                     MyConstant.SetDeadZone(value);
                 }
@@ -129,30 +129,26 @@ namespace SimulatorRecorder.Modules
 
         public static bool SetUnityFilePath(string title)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = title;
-            openFileDialog.Filter = "All Files|*.*";
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            string? fullPath = GetPathWithFileDialog();
+            if (fullPath == null)
             {
                 return false;
             }
 
-            MyConstant.SetwindowsPlayerPath(openFileDialog.FileName);
-            SetSetting("windowsPlayerPath", MyConstant.GetwindowsPlayerPath());
+            MyConstant.SetwindowsPlayerPath(fullPath);
+            SetSetting(MyConstant.WindowsPlayerPath, MyConstant.GetwindowsPlayerPath());
             return true;
         }
         public static bool SetSaveFilePath()
         {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.SelectedPath = folderPath;
-
-            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+            string? selectedPath = GetPathWithFolderDialog();
+            if (selectedPath == null)
             {
                 return false;
             }
-            folderPath = folderBrowserDialog.SelectedPath;
-            filePath = Path.Combine(folderPath, $"recordLog_{count}.csv");
-            SetSetting("folderPath", folderPath);
+
+            filePath = Path.Combine(selectedPath, $"recordLog_{count}.csv");
+            SetSetting(MyConstant.FolderPath, selectedPath);
             return true;
         }
 
@@ -160,26 +156,24 @@ namespace SimulatorRecorder.Modules
         {
             int value = MessageBoxHelper.InputBox("데드존 설정", "값 설정 (범위 : 0 ~ 100 사이 값)", (int)(MyConstant.GetDeadZone() * 100));
 
-            if(!(0 <= value && value <= 100))
+            if (!(0 <= value && value <= 100))
             {
                 return;
             }
 
             float deadZone = (float)value / 100f;
             MyConstant.SetDeadZone(deadZone);
-            SetSetting("deadZone", deadZone.ToString("F2"));
+            SetSetting(MyConstant.DeadZone, deadZone.ToString("F2"));
         }
 
         public static string?[] SetFilePath(string title)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = title;
-            openFileDialog.Filter = "All Files|*.*";
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            string? fullPath = GetPathWithFileDialog();
+            if (fullPath == null)
             {
                 return null!;
             }
-            string fullPath = openFileDialog.FileName;
+
             string[] result = new string[2];
             result[0] = Path.GetDirectoryName(fullPath)!;
             result[1] = Path.GetFileName(fullPath)!;
@@ -198,12 +192,12 @@ namespace SimulatorRecorder.Modules
             {
                 using (var writer = new StreamWriter(MyConstant.settingFilePath))
                 {
-                    writer.WriteLine($"folderPath={MyConstant.baseWindowsPlayerPath}");
-                    writer.WriteLine($"windowsPlayerPath={MyConstant.GetwindowsPlayerPath()}");
-                    writer.WriteLine($"deadZone={MyConstant.GetDeadZone().ToString("F2")}");
-                    settings["folderPath"] = MyConstant.basePath;
-                    settings["windowsPlayerPath"] = MyConstant.baseWindowsPlayerPath;
-                    settings["deadZone"] = MyConstant.GetDeadZone().ToString("F2");
+                    writer.WriteLine($"{MyConstant.FolderPath}={MyConstant.baseWindowsPlayerPath}");
+                    writer.WriteLine($"{MyConstant.WindowsPlayerPath}={MyConstant.GetwindowsPlayerPath()}");
+                    writer.WriteLine($"{MyConstant.DeadZone}={MyConstant.GetDeadZone().ToString("F2")}");
+                    settings[MyConstant.FolderPath] = MyConstant.basePath;
+                    settings[MyConstant.WindowsPlayerPath] = MyConstant.baseWindowsPlayerPath;
+                    settings[MyConstant.DeadZone] = MyConstant.GetDeadZone().ToString("F2");
                 }
             }
         }
@@ -237,18 +231,37 @@ namespace SimulatorRecorder.Modules
             return dict;
         }
 
-        public static List<OutputValue> readCSV(string title)
+        public static List<OutputValue> ReadCSV(string title)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Title = title;
-            openFileDialog.Filter = "CSV File|*.csv*";
-            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            string? fullPath = GetPathWithFileDialog("CSV file", "csv");
+            if (fullPath == null)
             {
                 return new List<OutputValue>();
             }
-            string fullPath = openFileDialog.FileName;
-
             return CSVReader.Read(fullPath);
+        }
+
+        public static string? GetPathWithFileDialog(string title = "ALL Files", string extension = "")
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = title;
+            openFileDialog.Filter = $"{title}|*.{extension}*";
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+            return openFileDialog.FileName;
+        }
+        public static string? GetPathWithFolderDialog()
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.SelectedPath = folderPath;
+
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+            {
+                return null;
+            }
+            return folderBrowserDialog.SelectedPath;
         }
     }
 }
