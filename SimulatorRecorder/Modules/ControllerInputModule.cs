@@ -19,7 +19,13 @@ namespace SimulatorRecorder.Modules
             bufferGameInput = new List<GamepadInput>();
             xinput = XInput.GetApi();
             state = new State();
-            curIndex = -1; 
+            curIndex = -1;
+            simulatorController.Connect();
+        }
+
+        ~ControllerInputModule()
+        {
+            simulatorController.DisConnect();
         }
 
         public bool IsConnected()
@@ -162,15 +168,24 @@ namespace SimulatorRecorder.Modules
 
             return bufferGameInput[curIndex];
         }
-
-        public string GetOutput(string key)
+        public OutputValue GetOutput()
         {
-            return outputModule.GetValue(key).ToString();
+            if (curIndex < 0)
+            {
+                return null!;
+            }
+
+            return buffer[curIndex];
         }
 
         public bool IsPressDownStartKey()
         {
             return GetPreState().values[10].buttonPressDown;
+        }
+
+        public void EndModule()
+        {
+            simulatorController.DisConnect();
         }
     }
 }

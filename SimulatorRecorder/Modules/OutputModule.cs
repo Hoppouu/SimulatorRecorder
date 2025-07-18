@@ -83,11 +83,6 @@ namespace SimulatorRecorder.Modules
             outputValue.Set(buttonMapping, mappingInitValue);
         }
 
-        public int GetValue(string key)
-        {
-            return outputValue.OutputData[key];
-        }
-
         private void InitValues()
         {
             for (int i = 1; i < MyConstant.outputsName.Length; i++)

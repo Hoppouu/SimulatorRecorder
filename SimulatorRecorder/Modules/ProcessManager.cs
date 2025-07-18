@@ -9,6 +9,11 @@ namespace SimulatorRecorder.Modules
         static private Process process = null!;
         static public void Launch(string[] args)
         {
+            if(process != null)
+            {
+                Close();
+            }
+
             try
             {
                 process = new Process();

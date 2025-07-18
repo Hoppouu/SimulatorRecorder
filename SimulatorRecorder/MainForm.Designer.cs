@@ -53,10 +53,10 @@
             button_selectVideo = new Button();
             button_record = new Button();
             button_play = new Button();
-            button_record_stop = new Button();
             button_play_stop = new Button();
             button_play_selectCSV = new Button();
             button_play_start = new Button();
+            label_elapsedRate = new Label();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -120,7 +120,7 @@
             button_record_end.BackColor = Color.FromArgb(192, 255, 192);
             button_record_end.Enabled = false;
             button_record_end.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_record_end.Location = new Point(195, 452);
+            button_record_end.Location = new Point(195, 450);
             button_record_end.Name = "button_record_end";
             button_record_end.Size = new Size(150, 38);
             button_record_end.TabIndex = 5;
@@ -158,7 +158,6 @@
             menu1.Name = "menu1";
             menu1.Size = new Size(43, 20);
             menu1.Text = "옵션";
-            menu1.Click += menu1_Click;
             // 
             // menu1_deadzon
             // 
@@ -259,7 +258,7 @@
             button_selectVideo.Enabled = false;
             button_selectVideo.FlatAppearance.BorderColor = Color.White;
             button_selectVideo.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_selectVideo.Location = new Point(25, 408);
+            button_selectVideo.Location = new Point(25, 406);
             button_selectVideo.Name = "button_selectVideo";
             button_selectVideo.Size = new Size(320, 38);
             button_selectVideo.TabIndex = 9;
@@ -295,21 +294,6 @@
             button_play.Text = "플레이";
             button_play.UseVisualStyleBackColor = false;
             button_play.Click += button_play_Click;
-            // 
-            // button_record_stop
-            // 
-            button_record_stop.BackColor = Color.FromArgb(255, 192, 192);
-            button_record_stop.FlatAppearance.BorderColor = Color.White;
-            button_record_stop.Font = new Font("맑은 고딕", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 129);
-            button_record_stop.Location = new Point(25, 496);
-            button_record_stop.Name = "button_record_stop";
-            button_record_stop.Size = new Size(150, 48);
-            button_record_stop.TabIndex = 11;
-            button_record_stop.TabStop = false;
-            button_record_stop.Text = "정지";
-            button_record_stop.UseVisualStyleBackColor = false;
-            button_record_stop.Visible = false;
-            button_record_stop.Click += button_record_stop_Click;
             // 
             // button_play_stop
             // 
@@ -355,6 +339,17 @@
             button_play_start.Visible = false;
             button_play_start.Click += button_play_start_Click;
             // 
+            // label_elapsedRate
+            // 
+            label_elapsedRate.AutoSize = true;
+            label_elapsedRate.Font = new Font("맑은 고딕", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 129);
+            label_elapsedRate.Location = new Point(124, 345);
+            label_elapsedRate.Name = "label_elapsedRate";
+            label_elapsedRate.Size = new Size(125, 30);
+            label_elapsedRate.TabIndex = 15;
+            label_elapsedRate.Text = "진행율 : 0%";
+            label_elapsedRate.Visible = false;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -377,10 +372,10 @@
             Controls.Add(PITCH);
             Controls.Add(ROLL);
             Controls.Add(menuStrip1);
-            Controls.Add(button_record_stop);
             Controls.Add(button_play_stop);
             Controls.Add(button_play_start);
             Controls.Add(button_play_selectCSV);
+            Controls.Add(label_elapsedRate);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
@@ -419,9 +414,9 @@
         private ToolStripMenuItem menu1_deadzon;
         private Button button_record;
         private Button button_play;
-        private Button button_record_stop;
         private Button button_play_stop;
         private Button button_play_selectCSV;
         private Button button_play_start;
+        private Label label_elapsedRate;
     }
 }

@@ -8,10 +8,11 @@ namespace SimulatorRecorder.Modules
     {
         private List<OutputValue> record;
         private SimulatorController simulatorController;
+        private int curIdx;
 
         private readonly OutputValue InitOutput = new OutputValue();
-        private int idx;
 
+        public OutputValue CurOutput { get; private set; } = new OutputValue();
         public bool IsPlayReady { get; private set; } = false;
         public bool IsEnd { get; private set; }
         public PlaybackModule()
@@ -19,12 +20,12 @@ namespace SimulatorRecorder.Modules
             record = new List<OutputValue>();
             simulatorController = new SimulatorController();
             IsEnd = false;
-            idx = 1;
+            curIdx = 1;
+            simulatorController.Connect();
         }
 
         public void InitPlayBack(List<OutputValue> record)
         {
-            Console.WriteLine(record.Count);
             if (record.Count == 0)
             {
                 IsPlayReady = false;
@@ -38,7 +39,6 @@ namespace SimulatorRecorder.Modules
         {
             if (IsEnd)
             {
-                //IsPlayReady = false;
                 PlayReset();
             }
             simulatorController.Call_VROA_MOBC_action(Next());
@@ -56,26 +56,40 @@ namespace SimulatorRecorder.Modules
             record = list;
         }
 
+        public OutputValue GetCurOutput()
+        {
+            return CurOutput;
+        }
 
-        public OutputValue? Next()
+        public double GetElapsedRate()
+        {
+            return 1.0 * (curIdx - 1) / (record.Count - 1) * 100;
+        }
+
+        public void EndModule()
+        {
+            simulatorController.DisConnect();
+        }
+        private OutputValue? Next()
         {
             int curTime = (int)(Math.Round(ProgramManager.GetElapsedTime(), 1) * 1000);
-            if (idx >= record.Count)
+            if (curIdx >= record.Count)
             {
                 IsEnd = true;
+                CurOutput = InitOutput;
                 return InitOutput;
             }
-            if (curTime < record[idx].OutputData[MyConstant.TIME])
+            if (curTime < record[curIdx].OutputData[MyConstant.TIME])
             {
                 return null;
             }
-
-            return record[idx++];
+            CurOutput = record[curIdx++];
+            return CurOutput;
         }
 
-        public void Reset()
+        private void Reset()
         {
-            idx = 1;
+            curIdx = 1;
             IsEnd = false;
         }
     }

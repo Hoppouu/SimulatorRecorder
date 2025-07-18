@@ -12,7 +12,6 @@ namespace SimulatorRecorder
         public MainForm()
         {
             InitializeComponent();
-            Init();
             FileManager.Init();
             ProgramManager.Initialize(this.timer_main, 100);
             controllerInputModule = new ControllerInputModule();
@@ -36,24 +35,29 @@ namespace SimulatorRecorder
 
         private void Init()
         {
+            //play button
+            button_play_selectCSV.Enabled = false;
+            button_play_start.Enabled = false;
+            button_play_stop.Enabled = false;
 
-            button_record_start.Visible = true;
-            button_record_end.Visible = true;
-            button_play.Visible = true;
-            button_record.Visible = true;
             button_play_selectCSV.Visible = false;
             button_play_start.Visible = false;
+            button_play_stop.Visible = false;
+            //
 
-
-
+            //record button
             button_record_start.Enabled = false;
             button_record_end.Enabled = false;
-            button_selectVideo.Enabled = false;
-            button_play_stop.Visible = false;
-            button_record_stop.Visible = false;
+
+            button_record_start.Visible = false;
+            button_record_end.Visible = false;
+            //
 
             stateButtonPlay = false;
             stateButtonRecord = false;
+
+            label_elapsedRate.Visible = false;
+            label_elapsedRate.Text = "진행율 : 0%";
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -101,45 +105,61 @@ namespace SimulatorRecorder
 
         private void TimerEvent(object sender, EventArgs e)
         {
-            if (!controllerInputModule.IsConnected())
+            if (controllerInputModule != null)
             {
-                didFindController.Visible = true;
-                return;
-            }
-            else
-            {
-                didFindController.Visible = false;
-            }
-
-            if (stateButtonRecord)
-            {
-                controllerInputModule.Run();
-                if (controllerInputModule.IsPressDownStartKey())
+                if (!controllerInputModule.IsConnected())
                 {
-                    TimerManage();
+                    didFindController.Visible = true;
+                    return;
                 }
-                TimerEventText();
-            }
-            else if (stateButtonPlay)
-            {
-                if (playbackModule.Playback())
+                else
                 {
-                    button_play_stop.PerformClick();
+                    didFindController.Visible = false;
                 }
 
+                if (stateButtonRecord)
+                {
+                    controllerInputModule.Run();
+                    if (controllerInputModule.IsPressDownStartKey())
+                    {
+                        TimerManage();
+                    }
+                    TimerEventText(controllerInputModule.GetOutput());
+                }
+            }
+            else if(playbackModule != null)
+            {
+                if (stateButtonPlay)
+                {
+                    TimerEventText(playbackModule.CurOutput);
+                    if (playbackModule.Playback())
+                    {
+                        button_play_stop.PerformClick();
+                    }
+
+                }
             }
         }
-        private void TimerEventText()
+        private void TimerEventText(OutputValue output)
         {
+            if (output == null)
+            {
+                return;
+            }
+            if (stateButtonPlay)
+            {
+                label_elapsedRate.Text = "진행율 : " + playbackModule.GetElapsedRate().ToString("F0") + "%";
+            }
+
             label_elapsed.Text = "진행 시간 : " + ProgramManager.GetElapsedTime().ToString("F1");
-            ROLL.Text = $"{MyConstant.ROLL}    : "      + controllerInputModule.GetOutput(MyConstant.ROLL);
-            PITCH.Text = $"{MyConstant.PITCH}   : "     + controllerInputModule.GetOutput(MyConstant.PITCH);
-            YAW.Text = $"{MyConstant.YAW}     : "       + controllerInputModule.GetOutput(MyConstant.YAW);
-            SWAY.Text = $"{MyConstant.SWAY}    : "      + controllerInputModule.GetOutput(MyConstant.SWAY);
-            SURGE.Text = $"{MyConstant.SURGE}   : "     + controllerInputModule.GetOutput(MyConstant.SURGE);
-            HEAVE.Text = $"{MyConstant.HEAVE}   : "     + controllerInputModule.GetOutput(MyConstant.HEAVE);
-            SPEED.Text = $"{MyConstant.SPEED}   : "     + controllerInputModule.GetOutput(MyConstant.SPEED);
-            BLOWER1.Text = $"{MyConstant.BLOWER1} : "   + controllerInputModule.GetOutput(MyConstant.BLOWER1);
+            ROLL.Text = $"{MyConstant.ROLL}    : " + output.OutputData[MyConstant.ROLL];
+            PITCH.Text = $"{MyConstant.PITCH}   : " + output.OutputData[MyConstant.PITCH];
+            YAW.Text = $"{MyConstant.YAW}     : " + output.OutputData[MyConstant.YAW];
+            SWAY.Text = $"{MyConstant.SWAY}    : " + output.OutputData[MyConstant.SWAY];
+            SURGE.Text = $"{MyConstant.SURGE}   : " + output.OutputData[MyConstant.SURGE];
+            HEAVE.Text = $"{MyConstant.HEAVE}   : " + output.OutputData[MyConstant.HEAVE];
+            SPEED.Text = $"{MyConstant.SPEED}   : " + output.OutputData[MyConstant.SPEED];
+            BLOWER1.Text = $"{MyConstant.BLOWER1} : " + output.OutputData[MyConstant.BLOWER1];
         }
 
         private void TimerManage()
@@ -184,6 +204,10 @@ namespace SimulatorRecorder
 
         private void button_selectVideo_Click(object sender, EventArgs e)
         {
+            if (ProgramManager.IsRunTimer)
+            {
+                return;
+            }
             string?[] path = FileManager.SetFilePath("동영상 파일 선택");
             if (path != null)
             {
@@ -191,70 +215,71 @@ namespace SimulatorRecorder
             }
         }
 
-        private void menu1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void button_record_Click(object sender, EventArgs e)
         {
-            if (stateButtonRecord || stateButtonPlay)
+            if (ProgramManager.IsRunTimer || stateButtonRecord)
             {
                 return;
             }
             Init();
-
-            stateButtonPlay = false;
-            stateButtonRecord = true;
-
             button_selectVideo.Enabled = true;
-
-            button_record.Visible = false;
             button_record_start.Enabled = true;
             button_record_end.Enabled = true;
-            button_record_stop.Visible = true;
+
+            button_selectVideo.Visible = true;
+            button_record_start.Visible = true;
+            button_record_end.Visible = true;
+
+            stateButtonRecord = true;
+
             ProgramManager.Initialize(100);
             ProgramManager.DoSemiStart();
 
+            if (playbackModule != null)
+            {
+                playbackModule.EndModule();
+                playbackModule = null!;
+            }
+            controllerInputModule = new ControllerInputModule();
         }
 
         private void button_play_Click(object sender, EventArgs e)
         {
-            if (stateButtonPlay || ProgramManager.IsRunTimer)
+            if (ProgramManager.IsRunTimer || stateButtonPlay)
             {
                 return;
             }
-            TimerEventText();
             ProgramManager.DoEnd();
-            button_record_stop.PerformClick();
+            TimerEventText(new OutputValue());
 
-            stateButtonRecord = false;
-
+            Init();
+            button_play_selectCSV.Enabled = true;
             button_selectVideo.Enabled = true;
-
-            button_record_start.Visible = false;
-            button_record_end.Visible = false;
 
             button_play_selectCSV.Visible = true;
             button_play_start.Visible = true;
-            button_play_start.Enabled = false;
-            button_play_stop.Visible = true;
+            button_selectVideo.Visible = true;
+            label_elapsedRate.Visible = true;
+
+            stateButtonPlay = true;
 
             ProgramManager.Initialize(50);
+            if(controllerInputModule != null)
+            {
+                controllerInputModule.EndModule();
+                controllerInputModule = null!;
+            }
+            playbackModule = new PlaybackModule();
 
-        }
-        private void button_record_stop_Click(object sender, EventArgs e)
-        {
-            Init();
-            stateButtonRecord = false;
-            ProgramManager.DoEnd();
         }
 
         private void button_play_stop_Click(object sender, EventArgs e)
         {
-            button_play_stop.Visible = false;
-            button_play_start.Visible = true;
             button_play_start.Enabled = true;
+            button_play_stop.Enabled = false;
+
+            button_play_start.Visible = true;
+            button_play_stop.Visible = false;
             playbackModule.PlayReset();
             stateButtonPlay = false;
             ProgramManager.DoEnd();
@@ -263,15 +288,18 @@ namespace SimulatorRecorder
 
         private void button_play_selecetCSV_Click(object sender, EventArgs e)
         {
+            if(ProgramManager.IsRunTimer)
+            {
+                return;
+            }
             List<OutputValue> list = FileManager.ReadCSV("CSV파일을 선택해주세요.");
 
 
-            if(list.Count != 0)
+            if (list.Count != 0)
             {
-                playbackModule = new PlaybackModule();
                 playbackModule.InitPlayBack(list);
             }
-            if(playbackModule.IsPlayReady)
+            if (playbackModule.IsPlayReady)
             {
                 button_play_start.Enabled = true;
             }
@@ -281,6 +309,9 @@ namespace SimulatorRecorder
 
         private void button_play_start_Click(object sender, EventArgs e)
         {
+            button_play_start.Enabled = false;
+            button_play_stop.Enabled = true;
+
             button_play_start.Visible = false;
             button_play_stop.Visible = true;
             stateButtonPlay = true;
