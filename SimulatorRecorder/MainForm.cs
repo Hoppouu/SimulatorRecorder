@@ -20,11 +20,9 @@ namespace SimulatorRecorder
             playbackModule = new PlaybackModule(simulatorController);
             HotKeyModule.OnHotKeyPressed += HotKeyAction;
             HotKeyModule.RegisterHotKey(this.Handle);
-            simulatorController.Connect();
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            simulatorController.Release();
             HotKeyModule.UnregisterHotKey(this.Handle);
             Modules.ProcessManager.Close();
             FileManager.SaveEnvFile();
