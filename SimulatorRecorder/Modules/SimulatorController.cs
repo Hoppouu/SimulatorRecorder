@@ -18,31 +18,33 @@ namespace SimulatorRecorder.Modules
 
         private int connectResult = 0;
 
-        [DllImport("AvSimDllMotionExternC")]
-        private static extern int MotionControl__Initial(); //통신초기화(시작)
+        private bool isSimulating = false;
 
-        //DOF(자유도)
-        //Roll(left/right rotate), Yaw(좌우 움직임), pitch (Front/Rear), heave(up/down), surge(forward/backward)
+        //[DllImport("AvSimDllMotionExternC")]
+        //private static extern int MotionControl__Initial(); //통신초기화(시작)
 
-        [DllImport("AvSimDllMotionExternC")]
-        private static extern int MotionControl__Destroy(); //통신해제
+        ////DOF(자유도)
+        ////Roll(left/right rotate), Yaw(좌우 움직임), pitch (Front/Rear), heave(up/down), surge(forward/backward)
 
-        //이게 처음에 만들어진 dll에 있는 함수171218 | 180121
-        [DllImport("AvSimDllMotionExternC")]
-        private unsafe static extern void MotionControl__DOF_and_Blower_and_Circle_and_DO_and_DI_and_Axis(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnCircle, IntPtr pnCircleSpeed, IntPtr pnDO, IntPtr pnDI, uint[] arrSrcPos, uint[] arrDstPos, uint[] arrEcdPos, bool bResp = true);
+        //[DllImport("AvSimDllMotionExternC")]
+        //private static extern int MotionControl__Destroy(); //통신해제
 
-        //이게 나중에 만들어진 dll에 있는 함수191113
-        [DllImport("AvSimDllMotionExternC")]
-        private unsafe static extern void MotionControlV2__DOF_and_Blower_and_Circling_and_DO_and_DI_and_Axis(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnCircle, IntPtr pnCircleSpeed, IntPtr pnDO, IntPtr pnDI, uint[] arrSrcPos, uint[] arrDstPos, uint[] arrEcdPos, bool bResp = true);
+        ////이게 처음에 만들어진 dll에 있는 함수171218 | 180121
+        //[DllImport("AvSimDllMotionExternC")]
+        //private unsafe static extern void MotionControl__DOF_and_Blower_and_Circle_and_DO_and_DI_and_Axis(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnCircle, IntPtr pnCircleSpeed, IntPtr pnDO, IntPtr pnDI, uint[] arrSrcPos, uint[] arrDstPos, uint[] arrEcdPos, bool bResp = true);
 
-        [DllImport("AvSimDllMotionExternC")]
-        private unsafe static extern void MotionControl__DOF_and_Blower_and_DO_and_DI_Data_Obtain(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnDO, IntPtr pnDI);
+        ////이게 나중에 만들어진 dll에 있는 함수191113
+        //[DllImport("AvSimDllMotionExternC")]
+        //private unsafe static extern void MotionControlV2__DOF_and_Blower_and_Circling_and_DO_and_DI_and_Axis(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnCircle, IntPtr pnCircleSpeed, IntPtr pnDO, IntPtr pnDI, uint[] arrSrcPos, uint[] arrDstPos, uint[] arrEcdPos, bool bResp = true);
+        
+        //[DllImport("AvSimDllMotionExternC")]
+        //private unsafe static extern void MotionControl__DOF_and_Blower_and_DO_and_DI_Data_Obtain(IntPtr pnRoll, IntPtr pnPitch, IntPtr pnYaw, IntPtr pnSway, IntPtr pnSurge, IntPtr pnHeave, IntPtr pnSpeed, IntPtr pnBlower, IntPtr pnDO, IntPtr pnDI);
 
 
         public SimulatorController()
         {
             //dll_mode = Setting.DLL;
-
+            //isSimulating = true;
             //EventDispatcher.Register(EventDispatcherKey.SIMUL_CONNECT, Connect);
             //EventDispatcher.Register(EventDispatcherKey.SIMUL_DISCONNECT, DisConnect);
             //EventDispatcher.Register(EventDispatcherKey.SIMUL_MOUNT, MountDismountMotio);
@@ -153,7 +155,21 @@ namespace SimulatorRecorder.Modules
             //            //VROA_MOBC_action(10000, 10000, 15000, 20000, 10000, 10000, 30, 0);
         }
 
-        public void DisConnect()
+        public void Release()
+        {
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_CONNECT, Connect);
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_DISCONNECT, DisConnect);
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_MOUNT, MountDismountMotio);
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_CENTER, CenterMotion);
+            //EventDispatcher.Unregister<String>(EventDispatcherKey.SIMUL_CUSTOM, CustomMotion);
+
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_BELTOFF, SetOffSeatBelt);
+            //EventDispatcher.Unregister(EventDispatcherKey.SIMUL_BELTON, SetOnSeatBelt);
+
+            isSimulating = false;
+        }
+
+        private void DisConnect()
         {
             //    getRoll = (uint)MyConstant.outputsInitDict[MyConstant.ROLL];
             //    getPitch = (uint)MyConstant.outputsInitDict[MyConstant.PITCH];
@@ -188,4 +204,88 @@ namespace SimulatorRecorder.Modules
         }
     }
 
-}
+
+        //void PlayMotion(string motionType)
+        //{
+        //    if (motionConfigs.ContainsKey(motionType))
+        //    {
+        //        AttractionJson motionFile = motionConfigs[motionType];
+        //        //LogManager.Log($"Playing motion: {JsonConvert.SerializeObject(motionFile)}");
+
+        //        getRoll = (uint)motionFile.roll;
+        //        getPitch = (uint)motionFile.pitch;
+        //        getYaw = (uint)motionFile.yaw;
+        //        getSway = (uint)motionFile.sway;
+        //        getSurge = (uint)motionFile.surge;
+        //        getHeave = (uint)motionFile.heave;
+        //        getSpeed = (uint)motionFile.speed;
+        //        getBlower = (uint)motionFile.blower;
+
+        //        // 여기에 실제 모션 실행 로직 추가
+        //        VROA_MOBC_action(
+        //            (int)getRoll,
+        //            (int)getPitch,
+        //            (int)getYaw,
+        //            (int)getSway,
+        //            (int)getSurge,
+        //            (int)getHeave,
+        //            (int)getSpeed,
+        //            (int)getBlower
+        //        );
+        //    }
+        //    else
+        //    {
+        //        //LogManager.Log($"Motion type {motionType} not found in config.");
+        //    }
+        //}
+
+
+        //public void MountDismountMotio()
+        //{
+        //    if (isSimulating)
+        //    {
+        //        //LogManager.Log("MountDismountMotio Fail : Already simulate run");
+        //        return;
+        //    }
+        //    PlayMotion(Constants.MOTION_MOUNT);
+        //}
+
+        //public void CenterMotion()
+        //{
+        //    if (isSimulating)
+        //    {
+        //        LogManager.Log("CenterMotion Fail : Already simulate run");
+        //        return;
+        //    }
+        //    PlayMotion(Constants.MOTION_CENTER);
+        //}
+
+        //public void CustomMotion(string motion)
+        //{
+        //    if (isSimulating)
+        //    {
+        //        //LogManager.Log("CustomMotion Fail : Already simulate run");
+        //        return;
+        //    }
+        //    PlayMotion(motion);
+        //}
+
+        //public void SetOnSeatBelt()
+        //{
+        //    //LogManager.Log("SetOnSeatBelt Start");
+        //    nDO = 3;
+        //    VROA_MOBC(getRoll, getPitch, getYaw, getSway, getSurge, getHeave, getSpeed, getBlower, 0, 0);
+
+        //    //LogManager.Log("SetOnSeatBelt End");
+        //}
+
+        //public void SetOffSeatBelt()
+        //{
+        //    //LogManager.Log("SetOffSeatBelt Start");
+
+        //    nDO = 0;
+        //    VROA_MOBC(getRoll, getPitch, getYaw, getSway, getSurge, getHeave, getSpeed, getBlower, 0, 0);
+
+        //    //LogManager.Log("SetOffSeatBelt End");
+        //}
+    }

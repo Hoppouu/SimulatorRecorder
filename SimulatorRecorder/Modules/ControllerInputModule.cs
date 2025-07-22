@@ -11,8 +11,9 @@ namespace SimulatorRecorder.Modules
         private State state;
         private int curIndex;
 
-        public ControllerInputModule()
+        public ControllerInputModule(SimulatorController simulatorController)
         {
+            this.simulatorController = simulatorController;
             outputModule = new OutputModule();
             simulatorController = new SimulatorController();
             buffer = new List<OutputValue>();
@@ -20,13 +21,8 @@ namespace SimulatorRecorder.Modules
             xinput = XInput.GetApi();
             state = new State();
             curIndex = -1;
-            simulatorController.Connect();
         }
 
-        ~ControllerInputModule()
-        {
-            simulatorController.DisConnect();
-        }
 
         public bool IsConnected()
         {
@@ -181,11 +177,6 @@ namespace SimulatorRecorder.Modules
         public bool IsPressDownStartKey()
         {
             return GetPreState().values[10].buttonPressDown;
-        }
-
-        public void EndModule()
-        {
-            simulatorController.DisConnect();
         }
     }
 }

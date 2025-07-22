@@ -34,10 +34,5 @@ namespace SimulatorRecorder.Modules
         {
             outputData[key] = value;
         }
-        
-        public void ToAttractionJson()
-        {
-
-        }
     }
 }

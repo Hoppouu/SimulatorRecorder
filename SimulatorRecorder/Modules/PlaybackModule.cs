@@ -15,13 +15,12 @@ namespace SimulatorRecorder.Modules
         public OutputValue CurOutput { get; private set; } = new OutputValue();
         public bool IsPlayReady { get; private set; } = false;
         public bool IsEnd { get; private set; }
-        public PlaybackModule()
+        public PlaybackModule(SimulatorController simulatorController)
         {
             record = new List<OutputValue>();
-            simulatorController = new SimulatorController();
+            this.simulatorController = simulatorController;
             IsEnd = false;
             curIdx = 1;
-            simulatorController.Connect();
         }
 
         public void InitPlayBack(List<OutputValue> record)
@@ -65,11 +64,6 @@ namespace SimulatorRecorder.Modules
         {
             return 1.0 * (curIdx - 1) / (record.Count - 1) * 100;
         }
-
-        public void EndModule()
-        {
-            simulatorController.DisConnect();
-        }
         private OutputValue? Next()
         {
             int curTime = (int)(Math.Round(ProgramManager.GetElapsedTime(), 1) * 1000);
@@ -85,7 +79,7 @@ namespace SimulatorRecorder.Modules
             }
             CurOutput = record[curIdx++];
             return CurOutput;
-        }
+        }   
 
         private void Reset()
         {
