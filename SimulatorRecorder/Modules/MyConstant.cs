@@ -20,7 +20,7 @@ namespace SimulatorRecorder.Modules
 
     public static class MyConstant
     {
-        //Outputs
+        //Outputs====================================================
         public const string TIME = "TIME";
         public const string ROLL = "ROLL";
         public const string PITCH = "PITCH";
@@ -32,7 +32,7 @@ namespace SimulatorRecorder.Modules
         public const string BLOWER1 = "BLOWER1";
 
 
-        //Buttons
+        //Buttons======================================================
         public const string LStickX = "LStickX";
         public const string LStickY = "LStickY";
         public const string RStickX = "RStickX";
@@ -46,13 +46,15 @@ namespace SimulatorRecorder.Modules
         public const string X = "X";
         public const string Y = "Y";
 
-        //Env
+
+        //Env============================================================
         public const string FolderPath = "folderPath";
         public const string WindowsPlayerPath = "windowsPlayerPath";
         public const string DeadZone = "deadZone";
         public const string Outputs = "outputs";
-
-        //===============================================================
+        
+        
+        //============================================================================================
 
 
         readonly static public string[] buttonsName;

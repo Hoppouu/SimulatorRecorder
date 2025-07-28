@@ -255,7 +255,6 @@ namespace SimulatorRecorder.Modules
         public static string? GetPathWithFolderDialog()
         {
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            folderBrowserDialog.SelectedPath = folderPath;
 
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
             {

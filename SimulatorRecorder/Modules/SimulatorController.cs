@@ -92,20 +92,18 @@ namespace SimulatorRecorder.Modules
             int Speed = output.OutputData[MyConstant.SPEED];
             int Blower1 = output.OutputData[MyConstant.BLOWER1];
 
-#if DEBUG
-            Console.Write(
-                "Timer : " + ((int)(Math.Round(ProgramManager.GetElapsedTime(), 1) * 1000)).ToString() + "[TIME, " + output.OutputData["TIME"] + "]" +
-                "[ROLL, " + Roll + "] " +
-                "[PITCH, " + Pitch + "] " +
-                "[YAW, " + Yaw + "] " +
-                "[SWAY, " + Sway + "] " +
-                "[SURGE, " + Surge + "] " +
-                "[HEAVE, " + Heave + "] " +
-                "[SPEED, " + Speed + "] " +
-                "[BLOWER1, " + Blower1 + "]"
-                );
-            Console.WriteLine();
-#endif
+            //Console.Write(
+            //    "Timer : " + ((int)(Math.Round(ProgramManager.GetElapsedTime(), 1) * 1000)).ToString() + "[TIME, " + output.OutputData["TIME"] + "]" +
+            //    "[ROLL, " + Roll + "] " +
+            //    "[PITCH, " + Pitch + "] " +
+            //    "[YAW, " + Yaw + "] " +
+            //    "[SWAY, " + Sway + "] " +
+            //    "[SURGE, " + Surge + "] " +
+            //    "[HEAVE, " + Heave + "] " +
+            //    "[SPEED, " + Speed + "] " +
+            //    "[BLOWER1, " + Blower1 + "]"
+            //    );
+            //Console.WriteLine();
             VROA_MOBC_action(Roll, Pitch, Yaw, Sway, Surge, Heave, Speed, Blower1);
         }
 
