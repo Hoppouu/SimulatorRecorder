@@ -5,17 +5,18 @@ namespace SimulatorRecorder.Modules
     {
         private OutputModule outputModule;
         private SimulatorController simulatorController;
+        private SimulatorDataProvider simulatorDataProvider;
         private List<OutputValue> buffer;
         private List<GamepadInput> bufferGameInput;
         private XInput xinput;
         private State state;
         private int curIndex;
 
-        public ControllerInputModule(SimulatorController simulatorController)
+        public ControllerInputModule(SimulatorController simulatorController, SimulatorDataProvider simulatorDataProvider)
         {
+            this.simulatorDataProvider = simulatorDataProvider;
             this.simulatorController = simulatorController;
             outputModule = new OutputModule();
-            simulatorController = new SimulatorController();
             buffer = new List<OutputValue>();
             bufferGameInput = new List<GamepadInput>();
             xinput = XInput.GetApi();
@@ -145,8 +146,8 @@ namespace SimulatorRecorder.Modules
             //}
 
             outputModule.SetOutputValue(curState.time, curState.values);
-            simulatorController.Call_VROA_MOBC_action(outputModule.GetOutputValue());
 
+            simulatorDataProvider.SetMotion(outputModule.GetOutputValue());
             ++curIndex;
             buffer.Add(outputModule.GetOutputValue());
             bufferGameInput.Add(curState);

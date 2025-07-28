@@ -8,6 +8,7 @@ namespace SimulatorRecorder.Modules
     {
         private List<OutputValue> record;
         private SimulatorController simulatorController;
+        private SimulatorDataProvider simulatorDataProvider;
         private int curIdx;
 
         private readonly OutputValue InitOutput = new OutputValue();
@@ -15,10 +16,11 @@ namespace SimulatorRecorder.Modules
         public OutputValue CurOutput { get; private set; } = new OutputValue();
         public bool IsPlayReady { get; private set; } = false;
         public bool IsEnd { get; private set; }
-        public PlaybackModule(SimulatorController simulatorController)
+        public PlaybackModule(SimulatorController simulatorController, SimulatorDataProvider simulatorDataProvider)
         {
             record = new List<OutputValue>();
             this.simulatorController = simulatorController;
+            this.simulatorDataProvider = simulatorDataProvider;
             IsEnd = false;
             curIdx = 1;
         }
@@ -40,7 +42,7 @@ namespace SimulatorRecorder.Modules
             {
                 PlayReset();
             }
-            simulatorController.Call_VROA_MOBC_action(Next());
+            simulatorDataProvider.SetMotion(Next());
 
             return IsEnd;
         }

@@ -8,21 +8,26 @@ namespace SimulatorRecorder
         private ControllerInputModule controllerInputModule;
         private PlaybackModule playbackModule;
         private SimulatorController simulatorController;
+        private SimulatorDataProvider simulatorDataProvider;
         bool stateButtonRecord;
         bool stateButtonPlay;
         public MainForm()
         {
             InitializeComponent();
             FileManager.Init();
-            ProgramManager.Initialize(this.timer_main, 100);
-            simulatorController = new SimulatorController();
-            controllerInputModule = new ControllerInputModule(simulatorController);
-            playbackModule = new PlaybackModule(simulatorController);
+            simulatorDataProvider = new SimulatorDataProvider();
+            simulatorController = new SimulatorController(simulatorDataProvider);
+            controllerInputModule = new ControllerInputModule(simulatorController, simulatorDataProvider);
+            playbackModule = new PlaybackModule(simulatorController, simulatorDataProvider);
+            ProgramManager.Initialize(this.timer_main, 100, simulatorController);
             HotKeyModule.OnHotKeyPressed += HotKeyAction;
             HotKeyModule.RegisterHotKey(this.Handle);
+
+            simulatorController.StartSimulation();
         }
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
+            simulatorController.EndSimulation();
             HotKeyModule.UnregisterHotKey(this.Handle);
             Modules.ProcessManager.Close();
             FileManager.SaveEnvFile();
@@ -63,8 +68,7 @@ namespace SimulatorRecorder
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            ProgramManager.DoSemiStart();
-            controllerInputModule = new ControllerInputModule(simulatorController);
+            ProgramManager.DoInitStart();
         }
         private void button_record_start_Click(object sender, EventArgs e)
         {
@@ -82,7 +86,7 @@ namespace SimulatorRecorder
             }
             HotKeyModule.SendHotKeySignal();
             ProgramManager.DoStart();
-            controllerInputModule = new ControllerInputModule(simulatorController);
+            controllerInputModule = new ControllerInputModule(simulatorController, simulatorDataProvider);
         }
 
         private void button_record_end_Click(object sender, EventArgs e)
@@ -241,7 +245,7 @@ namespace SimulatorRecorder
             {
                 playbackModule = null!;
             }
-            controllerInputModule = new ControllerInputModule(simulatorController);
+            controllerInputModule = new ControllerInputModule(simulatorController, simulatorDataProvider);
         }
 
         private void button_play_Click(object sender, EventArgs e)
@@ -269,7 +273,7 @@ namespace SimulatorRecorder
             {
                 controllerInputModule = null!;
             }
-            playbackModule = new PlaybackModule(simulatorController);
+            playbackModule = new PlaybackModule(simulatorController, simulatorDataProvider);
 
         }
 

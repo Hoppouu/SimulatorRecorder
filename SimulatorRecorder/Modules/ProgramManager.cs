@@ -7,17 +7,20 @@ namespace SimulatorRecorder.Modules
     {
         private static DateTime startTime;
         private static TimeSpan elapsedTime;
+        private static SimulatorController simulatorController = null!;
         private static Timer timer = null!;
         public static bool IsRunTimer { get; private set; }
-        public static bool IsRunMOBC { get; private set; }
-        public static void Initialize(Timer timer, int interval)
+        public static void Initialize(Timer timer, int interval, SimulatorController simulatorController)
         {
             IsRunTimer = false;
-            IsRunMOBC = false;
             if (ProgramManager.timer == null)
             {
                 ProgramManager.timer = timer;
                 ProgramManager.timer.Interval = interval;
+            }
+            if(ProgramManager.simulatorController == null)
+            {
+                ProgramManager.simulatorController = simulatorController;
             }
         }
 
@@ -28,25 +31,30 @@ namespace SimulatorRecorder.Modules
                 ProgramManager.timer.Interval = interval;
             }
         }
+        public static void DoInitStart()
+        {
+            IsRunTimer = false;
+            timer.Enabled = true;
+        }
         public static void DoSemiStart()
         {
             IsRunTimer = false;
-            IsRunMOBC = true;
             timer.Enabled = true;
+            simulatorController.resumeSimulation();
         }
 
         public static void DoSemiEnd()
         {
             timer.Enabled = false;
-            IsRunMOBC = false;
+            simulatorController.StopSimulation();
         }
 
         public static void DoStart()
         {
             timer.Enabled = true;
             IsRunTimer = true;
-            IsRunMOBC = true;
             startTime = DateTime.Now;
+            simulatorController.resumeSimulation();
         }
 
         public static void ResetTimer()
@@ -58,7 +66,7 @@ namespace SimulatorRecorder.Modules
         {
             timer.Enabled = false;
             IsRunTimer = false;
-            IsRunMOBC = false;
+            simulatorController.StopSimulation();
         }
 
         public static double GetElapsedTime()
